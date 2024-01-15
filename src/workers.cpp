@@ -13,7 +13,7 @@ static uint64 fibonacci(uint64 n)
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-void workerBodyA()
+void workerBodyA(void *)
 {
     uint8 i = 0;
     for (; i < 3; i++)
@@ -48,9 +48,10 @@ void workerBodyA()
 
     kThread::running->setFinished(true);
     kThread::yield();
+    printString("yee");
 }
 
-void workerBodyB()
+void workerBodyB(void*)
 {
     uint8 i = 10;
     for (; i < 13; i++)
@@ -77,4 +78,5 @@ void workerBodyB()
     }
     kThread::running->setFinished(true);
     kThread::yield();
+
 }

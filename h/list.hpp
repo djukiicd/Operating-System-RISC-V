@@ -90,6 +90,19 @@ public:
         if (!tail) { return 0; }
         return tail->data;
     }
+
+    int sizeL()
+    {
+        int s = 0;
+        Elem* tmp = head;
+        while(tmp)
+        {
+            s++;
+            tmp = tmp->next;
+        }
+
+        return s;
+    }
 };
 
 #endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_1_SYNCHRONOUS_LIST_HPP

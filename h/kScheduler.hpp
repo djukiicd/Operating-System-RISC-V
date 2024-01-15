@@ -15,11 +15,14 @@ private:
     static List<kThread> readyProcessQueue;
     //imace liste za blokirane itd
     //svaka nit ce imati nextReady, nextBlocked,.. tako cu ih povezivati
+//    static kThread* headReadyProccess;
+//    static kThread* tailReadyProccess;
 
 public:
 
     static kThread* get();
     static void put(kThread* thr);
+    //static int listize(){return readyProcessQueue.sizeL();}
 };
 
 

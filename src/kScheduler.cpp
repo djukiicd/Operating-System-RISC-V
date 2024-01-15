@@ -6,6 +6,7 @@ List<kThread> kScheduler::readyProcessQueue;
 kThread* kScheduler::get()
 {
     return readyProcessQueue.removeFirst();
+
 }
 
 void kScheduler::put(kThread* thr)
