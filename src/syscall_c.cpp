@@ -1,0 +1,148 @@
+#include "../h/syscall_c.hpp"
+#include "../lib/console.h"
+
+int test(int arg)
+{
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (arg));
+    __asm__ volatile("mv a0, %0" : : "r" (0x55));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+}
+void* mem_alloc(size_t size){
+
+    void* ptr = nullptr; //moram u startu da ga imam inicijalizovanog
+    int numMemBlocks = size/MEM_BLOCK_SIZE;
+    if(size%MEM_BLOCK_SIZE) numMemBlocks += 1;
+    __asm__ volatile("mv a0, %0" : : "r" (0x01));
+    __asm__ volatile("mv a1, %0" : : "r" (numMemBlocks));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ptr));
+    return ptr;
+}
+int mem_free(void* ptr){
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (ptr));
+    __asm__ volatile("mv a0, %0" : : "r" (0x02));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+}
+
+int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg, void* stack_space){
+
+    int ret = 0;
+//    uint64 ra;  problematicno
+//    __asm__ volatile("mv %0, a0" : "=r"(ra));
+//
+    if(start_routine!= nullptr)
+        stack_space = mem_alloc(DEFAULT_STACK_SIZE); //dira a0 (u kom nam povratna adresa)
+    __asm__ volatile("mv a1, %0": :"r"(handle));
+    __asm__ volatile("mv a2, %0": :"r"(start_routine)); //proveri
+    __asm__ volatile("mv a3, %0": :"r"(arg));
+    __asm__ volatile("mv a4, %0": : "r"(stack_space));
+    __asm__ volatile("mv a0, %0" : : "r" (0x11));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+int thread_exit(){
+
+    int ret = 0;
+    __asm__ volatile("mv a0, %0" : : "r" (0x12));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+void thread_dispatch(){
+
+    __asm__ volatile("mv a0, %0" : : "r" (0x13));
+    __asm__ volatile("ecall");
+}
+
+void thread_join(thread_t handle){
+
+    __asm__ volatile("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("mv a0, %0" : : "r" (0x14));
+    __asm__ volatile("ecall");
+}
+
+int sem_open(sem_t* handle, unsigned init){
+
+    int ret = 0;
+
+    __asm__ volatile("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("mv a2, %0" : : "r" (init));
+    __asm__ volatile("mv a0, %0" : : "r" (0x21));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+int sem_close(sem_t handle){
+
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("mv a0, %0" : : "r" (0x22));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+int sem_wait(sem_t id){
+
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (id));
+    __asm__ volatile("mv a0, %0" : : "r" (0x23));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+int sem_signal(sem_t id){
+
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (id));
+    __asm__ volatile("mv a0, %0" : : "r" (0x24));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+int time_sleep(time_t time){
+
+    int ret = 0;
+    __asm__ volatile("mv a1, %0" : : "r" (time));
+    __asm__ volatile("mv a0, %0" : : "r" (0x31));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+}
+
+char getc(){
+
+    char ret = '0';
+    __asm__ volatile("mv a0, %0" : : "r" (0x41));
+    __asm__ volatile("ecall");
+    __asm__ volatile("mv %0, a0": "=r"(ret));
+    return ret;
+
+}
+
+void putc(char c){
+
+    __asm__ volatile("mv a1, %0" : : "r" (c));
+    __asm__ volatile("mv a0, %0" : : "r" (0x42));
+    __asm__ volatile("ecall");
+
+}
+
