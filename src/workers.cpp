@@ -2,14 +2,14 @@
 // Created by marko on 20.4.22..
 //
 
-#include "../lib/hw.h"
-#include "../h/ccb.hpp"
+#include"../lib/hw.h"
+//#include "../h/ccb.hpp"
 #include "../h/print.hpp"
-
+#include "../h/kThread.hpp"
 static uint64 fibonacci(uint64 n)
 {
     if (n == 0 || n == 1) { return n; }
-    if (n % 4 == 0) CCB::yield();
+    if (n % 4 == 0) kThread::yield();
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
@@ -25,7 +25,7 @@ void workerBodyA()
 
     printString("A: yield\n");
     __asm__ ("li t1, 7");
-    CCB::yield();
+    kThread::yield();
 
     uint64 t1 = 0;
     __asm__ ("mv %[t1], t1" : [t1] "=r"(t1));
@@ -46,8 +46,8 @@ void workerBodyA()
         printString("\n");
     }
 
-    CCB::running->setFinished(true);
-    CCB::yield();
+    kThread::running->setFinished(true);
+    kThread::yield();
 }
 
 void workerBodyB()
@@ -62,7 +62,7 @@ void workerBodyB()
 
     printString("B: yield\n");
     __asm__ ("li t1, 5");
-    CCB::yield();
+    kThread::yield();
 
     uint64 result = fibonacci(23);
     printString("A: fibonaci=");
@@ -75,7 +75,6 @@ void workerBodyB()
         printInteger(i);
         printString("\n");
     }
-
-    CCB::running->setFinished(true);
-    CCB::yield();
+    kThread::running->setFinished(true);
+    kThread::yield();
 }

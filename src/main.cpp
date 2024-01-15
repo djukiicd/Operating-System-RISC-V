@@ -3,13 +3,14 @@
 //
 
 //#include "../h/ccb.hpp"
-//#include "../h/workers.hpp"
 #include "../h/print.hpp"
 #include "../h/riscv.hpp"
 #include "../h/syscall_c.hpp"
-
+#include "../h/kThread.hpp"
+#include "../h/workers.hpp"
 
 extern "C" { extern int __supervisorTrap;}
+
 int main()
 {
 
@@ -40,74 +41,24 @@ int main()
     printInteger(ret);
     printString(" mem_free done\n");
 
-    ptr = mem_alloc(256);
-    intPtr = (uint64)(ptr);
-    printHex(intPtr);
-    printString(" mem_alloc done\n");
+    kThread* threads[3];
+    threads[0] = kThread::createProcess(nullptr);
+    kThread::running = threads[0];
 
-    ret = mem_free(ptr);
-    printInteger(ret);
-    printString(" mem_free done\n");
+    threads[1] = kThread::createProcess(workerBodyA);
+    printString("CoroutineA created\n");
+    threads[2] = kThread::createProcess(workerBodyB);
+    printString("CoroutineB created\n");
 
-    ptr = mem_alloc(512);
-    intPtr = (uint64)(ptr);
-    printHex(intPtr);
-    printString(" mem_alloc done\n");
+    while (!(threads[1]->isFinished() && threads[2]->isFinished()))
+    {
+        kThread::yield();
+    }
 
-    ret = mem_free(ptr);
-    printInteger(ret);
-    printString("mem_free done\n");
-
-    ptr = mem_alloc(512);
-    intPtr = (uint64)(ptr);
-    printHex(intPtr);
-    printString(" mem_alloc done\n");
-
-    ret = mem_free(ptr);
-    printInteger(ret);
-    printString("mem_free done\n");
-
-
-////    ret = thread_create();
-////    printInteger(ret);
-////    printString(" thread_create done\n");
-//
-//    ret = thread_exit();
-//    printInteger(ret);
-//    printString(" thread_exit done\n");
-//
-//    thread_dispatch();
-//    printString(" thread_dispatch done\n");
-//
-//    thread_join(handleT);
-//    printString(" thread_join done\n");
-//
-//    ret = sem_open(&handleS, init);
-//    printInteger(ret);
-//    printString(" sem_open done\n");
-//
-//    ret = sem_close(handleS);
-//    printInteger(ret);
-//    printString(" sem_close done\n");
-//
-//    ret = sem_wait(id);
-//    printInteger(ret);
-//    printString(" sem_wait done\n");
-//
-//    ret = sem_signal(id);
-//    printInteger(ret);
-//    printString(" sem_signal done\n");
-//
-//    ret = time_sleep(time_t);
-//    printInteger(ret);
-//    printString(" time_sleep done\n");
-
-//    c = getc();
-//    putc(c);
-//    printString(" getc done\n");
-//
-//    putc(c);
-//    printString(" putc done\n");
+    for (auto &thread: threads)
+    {
+        delete thread;
+    }
 
     printString("Main exit\n");
     return 0;

@@ -77,7 +77,7 @@ void Riscv::handleSyscall() {
 //
 //                if(*handleCreate) ret = 0;
 //                else ret = -11;
-//                if(body) Scheduler::put(*handleCreate);
+//                if(body) kScheduler::put(*handleCreate);
 //                __asm__ volatile("mv a0, %0"::"r"(ret));
 //                break;
 //            case 0x12://thread_exit
