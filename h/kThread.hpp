@@ -2,7 +2,9 @@
 #define OS_PROJECT_BASE_KTHREAD_H
 
 #include "../lib/hw.h"
-#include "kScheduler.hpp"
+
+class kScheduler;
+
 class kThread{
 
 public:
@@ -10,62 +12,24 @@ public:
     ~kThread() { delete[] stack; }
     inline bool isFinished() const { return finished; }
     inline void setFinished(bool finished) { kThread::finished = finished; }
-    inline kThread* getNextReadyProccess(){return nextReadyProccess;}
+    //inline kThread* getNextReadyProccess(){return nextReadyProccess;}
     using Body = void (*)(void *);
 
-    static kThread* createProcess(Body body);
     static kThread* createProcess(Body body, void* arg, void* stack_space);
-    static kThread* createProcess(Body body, void* arg);
 
     static void yield();
     static kThread* running;
 
-    static void kthread_exit();
-
+    static void kThreadExit();
+    kThread* nextReadyProccess;
 private:
-
-    kThread(Body body):
-            body(body),
-            stack(body != nullptr ? new uint64[1024] : nullptr),
-            context({body!=nullptr?(uint64)threadWrapper: 0,
-                     body != nullptr ? (uint64) &stack[1024] : 0 }),
-            finished(false)
-
-    {
-        if(body != nullptr) { kScheduler::put(this);}
-    }
-
-    kThread(Body body, void * arg):
-            body(body),
-            arg(arg),
-            stack(body != nullptr ? new uint64[1024] : nullptr),
-            context({body!=nullptr?(uint64)threadWrapper: 0,
-                     body != nullptr ? (uint64) &stack[1024] : 0 }),
-            finished(false)
-
-    {
-        if(body != nullptr) { kScheduler::put(this);}
-    }
-
-    kThread(Body body, void* arg, void* stack_space) :
-            body(body),
-            arg(arg),
-            //stack(body!= nullptr ?(uint64*)stack_space + DEFAULT_STACK_SIZE : nullptr),
-            stack(body!= nullptr ? new uint64[4096]: nullptr),
-            context({body!=nullptr?(uint64)threadWrapper : 0,
-                     stack_space != nullptr ? (uint64) &stack[4096] : 0 }),
-            finished(false)
-
-    {
-        if(body != nullptr) { kScheduler::put(this);}
-    }
+    kThread(Body body, void* arg, void* stack_space);
     struct  Context{
         uint64 ra; //mesto na koje se nit vraca nakon predaje procesa x1
         uint64 sp; //dokle su stavljeni podaci na stek x2
     };
     Body body;
     void* arg;
-    kThread * nextReadyProccess;
     uint64 * stack; //raste ka nizim adresama
     Context context;
     bool finished;
@@ -74,6 +38,7 @@ private:
     static void threadWrapper();
     static void dispatch();
     friend class Riscv;
+    friend class kScheduler;
 
 };
 

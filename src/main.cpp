@@ -32,13 +32,14 @@ int main()
 //    printInteger(ret);
 //    printString(" test done\n");
 //
-    void* ptrA = mem_alloc(4096);
-    uint64 intPtr = (uint64)(ptrA);
+    uint64  size = 4096;
+    void* ptrA = mem_alloc(size);
+    uint64 intPtr = (uint64)(&ptrA);
     printHex(intPtr);
     printString(" mem_alloc done\n");
 
-    void* ptrB = mem_alloc(4096);
-    intPtr = (uint64)(ptrB);
+    void* ptrB = mem_alloc(size);
+    intPtr = (uint64)(&ptrB);
     printHex(intPtr);
     printString(" mem_alloc done\n");
 
@@ -47,14 +48,24 @@ int main()
 //    printString(" mem_free done\n");
 
     kThread* threads[3];
-    threads[0] = kThread::createProcess(nullptr);
+
+//    int retMain = thread_create(&threads[0], nullptr, nullptr);
+//    printInteger(retMain);
+//    printString("\n");
+//    kThread::running = threads[0];
+//
+//    int retA = thread_create(&threads[1], workerBodyA, nullptr);
+//    printInteger(retA);
+//    printString("\n");
+//    int retB = thread_create(&threads[2], workerBodyB, nullptr);
+//    printInteger(retB);
+//    printString("\n");
+
+
+    threads[0] = kThread::createProcess(nullptr,nullptr,nullptr);
     kThread::running = threads[0];
-
-
-    //threads[1] = kThread::createProcess(workerBodyA, nullptr);
     threads[1] = kThread::createProcess(workerBodyA, nullptr, ptrA);
     printString("CoroutineA created\n");
-    //threads[2] = kThread::createProcess(workerBodyB, nullptr);
     threads[2] = kThread::createProcess(workerBodyB, nullptr, ptrB);
     printString("CoroutineB created\n");
 
@@ -71,27 +82,4 @@ int main()
     printString("Main exit\n");
     return 0;
 
-//    CCB *coroutines[3];
-//
-//    coroutines[0] = CCB::createCoroutine(nullptr);
-//    CCB::running = coroutines[0];
-//
-//    coroutines[1] = CCB::createCoroutine(workerBodyA);
-//    printString("CoroutineA created\n");
-//    coroutines[2] = CCB::createCoroutine(workerBodyB);
-//    printString("CoroutineB created\n");
-//
-//    while (!(coroutines[1]->isFinished() &&
-//             coroutines[2]->isFinished()))
-//    {
-//        CCB::yield();
-//    }
-//
-//    for (auto &coroutine: coroutines)
-//    {
-//        delete coroutine;
-//    }
-//    printString("Finished\n");
-//
-//    return 0;
 }

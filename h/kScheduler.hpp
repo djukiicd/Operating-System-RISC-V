@@ -1,8 +1,8 @@
-#ifndef OS_PROJECT_BASE_SCHEDULER_H
-#define OS_PROJECT_BASE_SCHEDULER_H
+#ifndef OS_PROJECT_BASE_KSCHEDULER_H
+#define OS_PROJECT_BASE_KSCHEDULER_H
 
-#include "list.hpp"
-class kThread; //da izbegnem kruznu zavisnost
+#include "../h/kThread.hpp"
+//class kThread; //da izbegnem kruznu zavisnost
 
 class kScheduler{
 
@@ -12,17 +12,17 @@ private:
     ~kScheduler(){}
     kScheduler(const kScheduler& obj) = delete;
     kScheduler& operator=(const kScheduler&) = delete;
-    static List<kThread> readyProcessQueue;
+
     //imace liste za blokirane itd
     //svaka nit ce imati nextReady, nextBlocked,.. tako cu ih povezivati
-//    static kThread* headReadyProccess;
-//    static kThread* tailReadyProccess;
+     static kThread* headReady;
+     static kThread* tailReady;
 
 public:
 
     static kThread* get();
     static void put(kThread* thr);
-    //static int listize(){return readyProcessQueue.sizeL();}
+
 };
 
 

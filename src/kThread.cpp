@@ -1,24 +1,30 @@
 #include "../h/kThread.hpp"
 #include "../h/print.hpp"
 #include "../h/riscv.hpp"
-
+#include "../h/kScheduler.hpp"
 kThread* kThread::running = nullptr;
 
+kThread::kThread(Body body, void* arg, void* stack_space) :
+body(body),
+arg(arg),
+//stack(body!= nullptr ?((uint64*)(uint64*)stack_space + 1024*8) : nullptr),
+stack(body!= nullptr ? new uint64[4096]: nullptr),
+context({body!=nullptr?(uint64)threadWrapper : 0,
+
+                //  stack_space != nullptr ? (uint64)&stack_space: 0 }),
+         stack_space != nullptr ? (uint64) &stack[4095] : 0 }),
+finished(false)
+
+{
+    if(body != nullptr) { kScheduler::put(this);}
+}
 kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
-    printString("3 arg\n");
-    return new kThread(body,args, stack_space); //ne mogu ovako da ga kreiram, al to cu popraviti sledece
+
+    printString("\nKreirana nit\n");
+    return new kThread(body,args, stack_space);
 
 }
 
-kThread* kThread::createProcess(Body body, void* args) {
-    printString("2 arg\n");
-    return new kThread(body,args); //ne mogu ovako da ga kreiram, al to cu popraviti sledece
-}
-kThread* kThread::createProcess(Body body) {
-    printString("1 arg\n");
-        return new kThread(body); //ne mogu ovako da ga kreiram, al to cu popraviti sledece
-
-}
 
 void kThread::yield()
 {
@@ -49,7 +55,9 @@ void kThread::threadWrapper() {
 //    kthread_exit();
 }
 
-void kThread::kthread_exit() {
+void kThread::kThreadExit() {
 
 }
+
+
 

@@ -6,6 +6,7 @@
 #include "../lib/console.h"
 #include "../h/print.hpp"
 #include "../lib/mem.h"
+#include "../h/kThread.hpp"
 
 using Body = void (*)(void *);
 
@@ -64,8 +65,12 @@ void Riscv::handleSyscall() {
                 ret = __mem_free(ptr);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
-//            case 0x11://thread_create
-//                __asm__ volatile("mv %0, a1":"=r"(handleCreate));
+            case 0x11://thread_create
+//                kThread* handle;
+//                Body body;
+//                void * arg;
+//                void * stack_space;
+//                __asm__ volatile("mv %0, a1":"=r"(handle));
 //                __asm__ volatile("mv %0, a2":"=r"(body));
 //                __asm__ volatile("mv %0, a3":"=r"(arg));
 //                if(body!= nullptr){
@@ -73,22 +78,21 @@ void Riscv::handleSyscall() {
 //                }
 //                else stack_space = nullptr;
 //
-//                *handleCreate = PCB::createProcess(body,arg,stack_space);
+//                handle = kThread::createProcess(body,arg,stack_space);
 //
-//                if(*handleCreate) ret = 0;
-//                else ret = -11;
-//                if(body) kScheduler::put(*handleCreate);
+//                if(handle) ret = 0;
+//                else ret = -0x11;
 //                __asm__ volatile("mv a0, %0"::"r"(ret));
 //                break;
 //            case 0x12://thread_exit
-//                if(PCB::running->body == nullptr){
-//                    ret = -12;
+//                if(kThread::running->body == nullptr){
+//                    ret = -0x12;
 //                    __asm__ volatile("mv a0, %0"::"r"(ret));
 //                }
-//                else PCB::exit();
+//                else kThread::kThreadExit();
 //                break;
 //            case 0x13: //thread_dispatch
-//                PCB::yield();
+//                kThread::yield();
 //                break;
 //            case 0x14: //thread_join
 //                __asm__ volatile("mv %0, a1":"=r"(handle));
@@ -146,10 +150,10 @@ void Riscv::handleSyscall() {
 //                __putc(c);
 //                break;
             case 0x55:
-                int arg;
-                __asm__ volatile("mv %0, a1":"=r"(arg));
-                arg += 6;
-                __asm__ volatile("mv a0, %0"::"r"(arg));
+                int args;
+                __asm__ volatile("mv %0, a1":"=r"(args));
+                args += 6;
+                __asm__ volatile("mv a0, %0"::"r"(args));
                 break;
             default: break;
         }

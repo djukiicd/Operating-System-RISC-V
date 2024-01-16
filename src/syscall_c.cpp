@@ -30,20 +30,18 @@ int mem_free(void* ptr){
     return ret;
 }
 
-int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg, void* stack_space){
+int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg){
 
     int ret = 0;
-//    uint64 ra;  problematicno
-//    __asm__ volatile("mv %0, a0" : "=r"(ra));
-//
-    if(start_routine!= nullptr)
-        stack_space = mem_alloc(DEFAULT_STACK_SIZE); //dira a0 (u kom nam povratna adresa)
+    void* stack_space;
+    if(start_routine)  stack_space = mem_alloc(DEFAULT_STACK_SIZE); //dira a0 (u kom nam povratna adresa)
+    else stack_space = nullptr;
     __asm__ volatile("mv a1, %0": :"r"(handle));
     __asm__ volatile("mv a2, %0": :"r"(start_routine)); //proveri
     __asm__ volatile("mv a3, %0": :"r"(arg));
-    __asm__ volatile("mv a4, %0": : "r"(stack_space));
+    __asm__ volatile("mv a4, %0": : "r"(stack_space)); //stavi stack_space na ox11
     __asm__ volatile("mv a0, %0" : : "r" (0x11));
-    __asm__ volatile("ecall");
+    __asm__ volatile("ecall"); //ovo je trenutak u kom menjam rezim
     __asm__ volatile("mv %0, a0": "=r"(ret));
     return ret;
 
