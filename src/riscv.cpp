@@ -91,9 +91,9 @@ void Riscv::handleSyscall() {
 //                }
 //                else kThread::kThreadExit();
 //                break;
-//            case 0x13: //thread_dispatch
-//                kThread::yield();
-//                break;
+            case 0x13: //thread_dispatch
+                kThread::yield();
+                break;
 //            case 0x14: //thread_join
 //                __asm__ volatile("mv %0, a1":"=r"(handle));
 //                PCB::join(handle);

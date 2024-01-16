@@ -6,10 +6,12 @@
 //#include "../h/ccb.hpp"
 #include "../h/print.hpp"
 #include "../h/kThread.hpp"
+#include "../h/syscall_c.hpp"
+
 static uint64 fibonacci(uint64 n)
 {
     if (n == 0 || n == 1) { return n; }
-    if (n % 4 == 0) kThread::yield();
+    if (n % 4 == 0) thread_dispatch();
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
@@ -25,7 +27,7 @@ void workerBodyA(void *)
 
     printString("A: yield\n");
     __asm__ ("li t1, 7");
-    kThread::yield();
+    thread_dispatch();
 
     uint64 t1 = 0;
     __asm__ ("mv %[t1], t1" : [t1] "=r"(t1));
@@ -47,7 +49,7 @@ void workerBodyA(void *)
     }
 
     kThread::running->setFinished(true);
-    kThread::yield();
+    thread_dispatch();
     printString("yee");
 }
 
@@ -63,7 +65,7 @@ void workerBodyB(void*)
 
     printString("B: yield\n");
     __asm__ ("li t1, 5");
-    kThread::yield();
+    thread_dispatch();
 
     uint64 result = fibonacci(23);
     printString("A: fibonaci=");
@@ -77,6 +79,24 @@ void workerBodyB(void*)
         printString("\n");
     }
     kThread::running->setFinished(true);
-    kThread::yield();
+    thread_dispatch();
 
+}
+
+void workerBodyC(void*)
+{
+    while(1)
+    {
+        printString("C\n");
+        kThread::yield();
+    }
+}
+
+void workerBodyD(void*)
+{
+    while(1)
+    {
+        printString("D\n");
+        kThread::yield();
+    }
 }

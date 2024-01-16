@@ -71,14 +71,14 @@ int main()
 
     while (!(threads[1]->isFinished() && threads[2]->isFinished()))
     {
-        kThread::yield();
+        thread_dispatch();
     }
 
     for (auto &thread: threads)
     {
         delete thread;
     }
-
+    //treba da testiras thread_create i thread_dispatch pomocu niti koje se nikad ne zavrsavaju
     printString("Main exit\n");
     return 0;
 
