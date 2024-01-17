@@ -4,19 +4,16 @@
 #include "../h/kScheduler.hpp"
 kThread* kThread::running = nullptr;
 
-kThread::kThread(Body body, void* arg, void* stack_space) : body(body), arg(arg),
-
-//stack(body!= nullptr ?(uint64*)stack_space + DEFAULT_STACK_SIZE* 8 : nullptr),
-    stack(body!= nullptr ? new uint64[4096]: nullptr),
-    context({body!=nullptr?(uint64)threadWrapper : 0,
-
-                    //  stack_space != nullptr ? (uint64)&stack_space: 0 }),
-             stack_space != nullptr ? (uint64) &stack[4095] : 0 }),
-finished(false)
-
+kThread::kThread(Body body, void* arg, void* stack_space) :
+        body(body),
+        arg(arg),
+        stack(body != nullptr ? (uint64*)stack_space - DEFAULT_STACK_SIZE + 1 : nullptr),
+        context({body!=nullptr?(uint64)threadWrapper : 0,stack != nullptr ? (uint64)stack : 0}),
+        finished(false)
     {
         if(body != nullptr) { kScheduler::put(this);}
     }
+
 kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
 
     return new kThread(body,args, stack_space);
