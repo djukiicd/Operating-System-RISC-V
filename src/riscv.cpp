@@ -18,18 +18,13 @@ void Riscv::popSppSpie()
 
 void Riscv::handleSyscall() {
 
-    //uzimam parametre
-    uint64 a0, a1, a2, a3, a4;
-    __asm__ volatile("mv %0, a0" : "=r"(a0));
-    __asm__ volatile("mv %0, a1" : "=r"(a1));
-    __asm__ volatile("mv %0, a2" : "=r"(a2));
-    __asm__ volatile("mv %0, a4" : "=r"(a3));
-    __asm__ volatile("mv %0, a4" : "=r"(a4));
+    //uzimam parametre UZMI SVIH 7
+    //uint64 a0, a1, a2, a3, a4;
 
     uint64  scause = r_scause();
 
     //ecall iz korisnickog, ecall iz sistemskog rezima
-    if(scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)//syscall
+    if(scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)//syscall  PROMENIO MI SE A4 ZASTO???
     {
 
         uint64 volatile sepc = r_sepc()+ 4; // jer pc pokazuje na trenutnu instrukciju tj ecall, a po povratku treba da sksocim na  sledecu da se ne bih vrtela vecno
@@ -66,31 +61,31 @@ void Riscv::handleSyscall() {
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
             case 0x11://thread_create
-//                kThread* handle;
-//                Body body;
-//                void * arg;
-//                void * stack_space;
-//                __asm__ volatile("mv %0, a1":"=r"(handle));
-//                __asm__ volatile("mv %0, a2":"=r"(body));
-//                __asm__ volatile("mv %0, a3":"=r"(arg));
-//                if(body!= nullptr){
-//                    __asm__ volatile("mv %0, a4":"=r"(stack_space));
-//                }
-//                else stack_space = nullptr;
-//
-//                handle = kThread::createProcess(body,arg,stack_space);
-//
-//                if(handle) ret = 0;
-//                else ret = -0x11;
-//                __asm__ volatile("mv a0, %0"::"r"(ret));
-//                break;
-//            case 0x12://thread_exit
-//                if(kThread::running->body == nullptr){
-//                    ret = -0x12;
-//                    __asm__ volatile("mv a0, %0"::"r"(ret));
-//                }
-//                else kThread::kThreadExit();
-//                break;
+                kThread* handle;
+                Body body;
+                void * arg;
+                void * stack_space;
+                __asm__ volatile("mv %0, a1":"=r"(handle));
+                __asm__ volatile("mv %0, a2":"=r"(body));
+                __asm__ volatile("mv %0, a3":"=r"(arg));
+                if(body!= nullptr){
+                    __asm__ volatile("mv %0, a6":"=r"(stack_space));
+                }
+                else stack_space = nullptr;
+
+                handle = kThread::createProcess(body,arg,stack_space);
+
+                if(handle) ret = 0;
+                else ret = -0x11;
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
+            case 0x12://thread_exit
+                if(kThread::running->body == nullptr){
+                    ret = -0x12;
+                    __asm__ volatile("mv a0, %0"::"r"(ret));
+                }
+                else kThread::kThreadExit();
+                break;
             case 0x13: //thread_dispatch
                 kThread::yield();
                 break;
@@ -150,10 +145,13 @@ void Riscv::handleSyscall() {
 //                __putc(c);
 //                break;
             case 0x55:
-                int args;
-                __asm__ volatile("mv %0, a1":"=r"(args));
-                args += 6;
-                __asm__ volatile("mv a0, %0"::"r"(args));
+                int arg1,arg2,arg3,arg4;
+                __asm__ volatile("mv %0, a1":"=r"(arg1));
+                __asm__ volatile("mv %0, a2":"=r"(arg2));
+                __asm__ volatile("mv %0, a3":"=r"(arg3));
+                __asm__ volatile("mv %0, a6":"=r"(arg4));
+                arg1 += arg2+arg3+arg4;
+                __asm__ volatile("mv a0, %0"::"r"(arg1));
                 break;
             default: break;
         }

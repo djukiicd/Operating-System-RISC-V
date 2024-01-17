@@ -25,4 +25,4 @@ char getc(); //0x41                                                             
 void putc(char c); //0x42                                                                              NE
 
 
-int test(int arg);
+int test(int arg1,int arg2,int arg3, int arg4);
