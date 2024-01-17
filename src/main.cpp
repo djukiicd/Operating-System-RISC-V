@@ -32,26 +32,27 @@ int main()
 //    printInteger(ret);
 //    printString(" test done\n");
 
-//    uint64  size = 4096;
-//    void* ptrA = mem_alloc(size);
-//    uint64 intPtr = (uint64)(&ptrA);
-//    printHex(intPtr);
-//    printString(" mem_alloc done\n");
-//
-//    void* ptrB = mem_alloc(size);
-//    intPtr = (uint64)(&ptrB);
-//    printHex(intPtr);
-//    printString(" mem_alloc done\n");
-//
-////    ret = mem_free(ptr);
-////    printInteger(ret);
-////    printString(" mem_free done\n");
+    uint64  size = 4096;
+    void* ptrA = mem_alloc(size);
+    uint64 intPtr = (uint64)(&ptrA);
+    printHex(intPtr);
+    printString(" mem_alloc done\n");
+
+    void* ptrB = mem_alloc(size);
+    intPtr = (uint64)(&ptrB);
+    printHex(intPtr);
+    printString(" mem_alloc done\n");
+
+//    ret = mem_free(ptr);
+//    printInteger(ret);
+//    printString(" mem_free done\n");
 
     kThread* threads[3];
 
     int retMain = thread_create(&threads[0], nullptr, nullptr);
     printInteger(retMain);
     printString("\n");
+
     kThread::running = threads[0];
 
     int retA = thread_create(&threads[1], workerBodyA, nullptr);
@@ -61,28 +62,15 @@ int main()
     printInteger(retB);
     printString("\n");
 
-////     kThread* threads[3];
-////    threads[0] = kThread::createProcess(nullptr,nullptr,nullptr);
-////    kThread::running = threads[0];
-////    threads[1] = kThread::createProcess(workerBodyA, nullptr, ptrA);
-////    printString("CoroutineA created\n");
-////    threads[2] = kThread::createProcess(workerBodyB, nullptr, ptrB);
-////    printString("CoroutineB created\n");
-//
-//
-////    kThread* threadsCD[3];
-////
-////    int ret1 = thread_create(&threadsCD[0], nullptr, nullptr);
-////    printInteger(ret1);
-////    printString("\n");
-////    kThread::running = threadsCD[0];
-////
-////    int retC = thread_create(&threadsCD[1], workerBodyC, nullptr);
-////    printInteger(retC);
-////    printString("\n");
-////    int retD = thread_create(&threadsCD[2], workerBodyD, nullptr);
-////    printInteger(retD);
-////    printString("\n");
+//     kThread* threads[3];
+//    threads[0] = kThread::createProcess(nullptr,nullptr,nullptr);
+//    kThread::running = threads[0];
+//    threads[1] = kThread::createProcess(workerBodyA, nullptr, ptrA);
+//    printString("CoroutineA created\n");
+//    threads[2] = kThread::createProcess(workerBodyB, nullptr, ptrB);
+//    printString("CoroutineB created\n");
+
+
 
     while (!(threads[1]->isFinished() && threads[2]->isFinished()))
     {

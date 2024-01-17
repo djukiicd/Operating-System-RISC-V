@@ -5,14 +5,11 @@ int test(int arg1,int arg2, int arg3, int arg4)
 {
     int ret = 0;
 
-    // Define the system call number as a constant
-    #define SYSCALL_NUM 0x55
-
     asm volatile("mv a6, %0" : : "r" (arg4)); //a3->a4
     asm volatile("mv a3, %0" : : "r" (arg3)); //a2->a3
     asm volatile("mv a2, %0" : : "r" (arg2)); //a1->a2
     asm volatile("mv a1, %0" : : "r" (arg1));//a0->a1
-    asm volatile("mv a0, %0" : : "r" (SYSCALL_NUM));
+    asm volatile("mv a0, %0" : : "r" (0x55));
     asm volatile("ecall");
     asm volatile("mv %0, a0" : "=r" (ret));
 
@@ -42,7 +39,7 @@ int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg){
 
     int ret = 0;
     void* stack_space;
-    if(start_routine)  stack_space = mem_alloc(DEFAULT_STACK_SIZE); //dira a0 (u kom nam povratna adresa)
+    if(start_routine)  stack_space = mem_alloc(DEFAULT_STACK_SIZE);
     else stack_space = nullptr;
 
     __asm__ volatile("mv a3, %0": :"r"(arg));
@@ -52,6 +49,7 @@ int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg){
     __asm__ volatile("mv a0, %0" : : "r" (0x11));
     __asm__ volatile("ecall"); //ovo je trenutak u kom menjam rezim
     __asm__ volatile("mv %0, a0": "=r"(ret));
+
     return ret;
 
 }

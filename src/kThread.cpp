@@ -8,7 +8,7 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         body(body),
         arg(arg),
         stack(body != nullptr ? (uint64*)stack_space - DEFAULT_STACK_SIZE + 1 : nullptr),
-        context({body!=nullptr?(uint64)threadWrapper : 0,stack != nullptr ? (uint64)stack : 0}),
+        context({body!=nullptr?(uint64)&threadWrapper : 0,stack != nullptr ? (uint64)stack : 0}),
         finished(false)
     {
         if(body != nullptr) { kScheduler::put(this);}
@@ -34,24 +34,27 @@ void kThread::dispatch()
 {
 
     kThread *old = running;
-    if (!old->isFinished()) { kScheduler::put(old); }
-    running = kScheduler::get();
+    if (!old->isFinished()) {
+        kScheduler::put(old);
+    }
+        running = kScheduler::get();
+        kThread::contextSwitch(&old->context, &running->context);
 
-    kThread::contextSwitch(&old->context, &running->context);
 }
 
 
 void kThread::threadWrapper() {
 
     Riscv::popSppSpie();
-  //  printInteger(100);
     running->body(running->arg);
-//    ktThreadExit();
+    running->kThreadExit();
 }
 
 void kThread::kThreadExit() {
-//treba da oslobodi memoriju koju je zauzeo
-//i da se obrise objekat niti
+
+    running->setFinished(true);
+    yield();
+    //treba negde i da je obrises, smisli kako
 }
 
 

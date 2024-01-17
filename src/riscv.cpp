@@ -12,14 +12,11 @@ using Body = void (*)(void *);
 
 void Riscv::popSppSpie()
 {
-    __asm__ volatile ("csrw sepc, ra"); // sepc <=ra
+    __asm__ volatile ("csrw sepc, ra");
     __asm__ volatile ("sret");
 }
 
 void Riscv::handleSyscall() {
-
-    //uzimam parametre UZMI SVIH 7
-    //uint64 a0, a1, a2, a3, a4;
 
     uint64  scause = r_scause();
 
@@ -61,7 +58,7 @@ void Riscv::handleSyscall() {
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
             case 0x11://thread_create
-                kThread* handle;
+                kThread** handle;
                 Body body;
                 void * arg;
                 void * stack_space;
@@ -73,18 +70,29 @@ void Riscv::handleSyscall() {
                 }
                 else stack_space = nullptr;
 
-                handle = kThread::createProcess(body,arg,stack_space);
+                *handle = kThread::createProcess(body,arg,stack_space);
+                if(handle!= nullptr)
+                {
+                    ret = 0;
+                    printString("uspesno kreirana nit\n");
 
-                if(handle) ret = 0;
+
+                }
                 else ret = -0x11;
+
                 __asm__ volatile("mv a0, %0"::"r"(ret));
+
                 break;
             case 0x12://thread_exit
                 if(kThread::running->body == nullptr){
                     ret = -0x12;
-                    __asm__ volatile("mv a0, %0"::"r"(ret));
                 }
-                else kThread::kThreadExit();
+                else
+                {
+                    kThread::running->kThreadExit();
+                    ret = 0;
+                }
+                __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
             case 0x13: //thread_dispatch
                 kThread::yield();
@@ -156,8 +164,7 @@ void Riscv::handleSyscall() {
             default: break;
         }
 
-        __asm__ volatile("sd a0, 80(fp)"); //resava mi problem sa a0 (skontaj sta si tu radila)
-        //PCB::dispatch();
+        __asm__ volatile("sd a0, 80(fp)"); //
         w_sstatus(sstatus);
         w_sepc(sepc);
 

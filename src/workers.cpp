@@ -48,9 +48,9 @@ void workerBodyA(void *)
         printString("\n");
     }
 
-    kThread::running->setFinished(true);
-    thread_dispatch();
-    printString("yee");
+//    kThread::running->setFinished(true);
+//    thread_dispatch();
+
 }
 
 void workerBodyB(void*)
@@ -78,25 +78,31 @@ void workerBodyB(void*)
         printInteger(i);
         printString("\n");
     }
-    kThread::running->setFinished(true);
-    thread_dispatch();
+//    kThread::running->setFinished(true);
+//    thread_dispatch();
 
 }
 
 void workerBodyC(void*)
 {
-    while(1)
+    uint8 i = 0;
+    while(i<6)
     {
         printString("C\n");
-        kThread::yield();
+        thread_dispatch();
+        i++;
     }
+
 }
 
 void workerBodyD(void*)
 {
-    while(1)
+    uint8 i = 0;
+    while(i<3)
     {
         printString("D\n");
-        kThread::yield();
-    }
+        thread_dispatch();
+        i++;
+   }
+
 }

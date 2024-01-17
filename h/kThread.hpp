@@ -20,7 +20,7 @@ public:
     static void yield();
     static kThread* running;
 
-    static void kThreadExit();
+    void kThreadExit();
     kThread* nextReadyProccess;
 private:
     kThread(Body body, void* arg, void* stack_space);
