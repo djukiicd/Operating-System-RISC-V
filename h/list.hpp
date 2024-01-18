@@ -1,9 +1,6 @@
-//
-// Created by marko on 20.4.22..
-//
 
-#ifndef OS_PROJECT_BASE_LIST_HPP
-#define OS_PROJECT_BASE_LIST_HPP
+#ifndef OPERATIVNI_SISTEMI_LIST_HPP
+#define OPERATIVNI_SISTEMI_LIST_HPP
 
 template<typename T>
 class List
@@ -105,4 +102,4 @@ public:
     }
 };
 
-#endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_1_SYNCHRONOUS_LIST_HPP
+#endif

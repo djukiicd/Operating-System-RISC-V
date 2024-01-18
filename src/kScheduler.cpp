@@ -2,26 +2,56 @@
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;
+
 //ne zaboravi idle nit da ubacis na pocetku
-kThread* kScheduler::get()
-{
+kThread* kScheduler::getReady(){
 
-    kThread* tmp = headReady;
-   if(headReady) headReady = headReady->nextReadyProccess;
-    return tmp;
-
+            kThread* tmp = headReady;
+            if(headReady) headReady = headReady->nextReadyProccess;
+            return tmp;
 }
 
-void kScheduler::put(kThread* thr)
-{
+void kScheduler::putReady(kThread *thr){
 
-    if(!headReady) headReady = thr;
+            if(!headReady) headReady = thr;
+            if(tailReady)
+            {
+                tailReady->nextReadyProccess = thr;
+            }
+            tailReady = thr;
+}
 
-    if(tailReady)
+kThread* kScheduler::getBlocked(kSemaphore *sem) {
+
+    for(int i = 0; i<MAX_SEMAPHORES;i++)
     {
-        tailReady->nextReadyProccess = thr;
+        if( semaphoreArray[i].sem == sem)
+        {
+            kThread* tmp = semaphoreArray[i].headBlocked;
+            if(semaphoreArray[i].headBlocked) semaphoreArray[i].headBlocked = semaphoreArray[i].headBlocked->nextBlockedProccess;
+            return tmp;
+        }
     }
 
-     tailReady = thr;
-
+    return nullptr;
 }
+
+void kScheduler::putBlocked(kThread *thr, kSemaphore *sem) {
+
+
+    for(int i = 0; i<MAX_SEMAPHORES;i++)
+    {
+        if(semaphoreArray[i].sem == sem)
+        {
+            if(!semaphoreArray[i].headBlocked) semaphoreArray[i].headBlocked = thr;
+            if(semaphoreArray[i].tailBlocked)
+            {
+                semaphoreArray[i].tailBlocked->nextBlockedProccess = thr;
+            }
+            semaphoreArray[i].tailBlocked = thr;
+            return;
+        }
+    }
+}
+
+

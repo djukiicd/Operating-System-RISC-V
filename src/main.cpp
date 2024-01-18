@@ -1,9 +1,4 @@
-//
-// Created by marko on 20.4.22..
-//
-
-//#include "../h/ccb.hpp"
-#include "../h/print.hpp"
+#include"../h/print.hpp"
 #include "../h/riscv.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/kThread.hpp"
@@ -14,7 +9,7 @@ extern "C" { extern int __supervisorTrap;}
 int main()
 {
 
-
+    //mskiranje prekida???
    __asm__ volatile ("csrw stvec, %0 ": : "r" ((uint64)&__supervisorTrap | 1));
     //Riscv::ms_sstatus(Riscv::SSTATUS_SIE); jel ovo za timer
     //__asm__ volatile  ("ecall");
@@ -62,15 +57,6 @@ int main()
     printInteger(retB);
     printString("\n");
 
-//     kThread* threads[3];
-//    threads[0] = kThread::createProcess(nullptr,nullptr,nullptr);
-//    kThread::running = threads[0];
-//    threads[1] = kThread::createProcess(workerBodyA, nullptr, ptrA);
-//    printString("CoroutineA created\n");
-//    threads[2] = kThread::createProcess(workerBodyB, nullptr, ptrB);
-//    printString("CoroutineB created\n");
-
-
 
     while (!(threads[1]->isFinished() && threads[2]->isFinished()))
     {
@@ -81,7 +67,7 @@ int main()
     {
         delete thread;
     }
-    //treba da testiras thread_create i thread_dispatch pomocu niti koje se nikad ne zavrsavaju
+
     printString("Main exit\n");
     return 0;
 

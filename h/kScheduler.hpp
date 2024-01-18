@@ -1,8 +1,8 @@
-#ifndef OS_PROJECT_BASE_KSCHEDULER_H
-#define OS_PROJECT_BASE_KSCHEDULER_H
-
+#ifndef OPERATIVNI_SISTEMI_KSCHEDULER_HPP
+#define OPERATIVNI_SISTEMI_KSCHEDULER_HPP
 #include "../h/kThread.hpp"
-//class kThread; //da izbegnem kruznu zavisnost
+#include "../h/kSemaphore.hpp"
+#define MAX_SEMAPHORES 100
 
 class kScheduler{
 
@@ -13,15 +13,25 @@ private:
     kScheduler(const kScheduler& obj) = delete;
     kScheduler& operator=(const kScheduler&) = delete;
 
-    //imace liste za blokirane itd
-    //svaka nit ce imati nextReady, nextBlocked,.. tako cu ih povezivati
      static kThread* headReady;
      static kThread* tailReady;
 
+     //svaki semafor ima svoj red blokiranih
+     struct semBlocked {
+         kSemaphore* sem;
+         kThread* headBlocked;
+         kThread* tailBlocked;
+
+         semBlocked(kSemaphore* sem) : sem(sem), headBlocked(nullptr), tailBlocked(nullptr) {}
+     };
+    static semBlocked semaphoreArray[MAX_SEMAPHORES];
 public:
 
-    static kThread* get();
-    static void put(kThread* thr);
+    static kThread* getReady();
+    static void putReady(kThread* thr);
+
+    static kThread* getBlocked(kSemaphore* sem);
+    static void putBlocked(kThread* thr, kSemaphore* sem);
 
 };
 

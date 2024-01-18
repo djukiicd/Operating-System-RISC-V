@@ -1,9 +1,6 @@
-//
-// Created by marko on 20.4.22..
-//
 
-#ifndef OS_PROJECT_BASE_RISCV_HPP
-#define OS_PROJECT_BASE_RISCV_HPP
+#ifndef OPERATIVNI_SISTEMI_RISCV_HPP
+#define OPERATIVNI_SISTEMI_RISCV_HPP
 
 #include "../lib/hw.h"
 //inline fje - bitno: nece se generisati masinski kod za poziv fje na mestu koriscenja u cpp kodu
@@ -193,4 +190,4 @@ inline void Riscv::w_sstatus(uint64 sstatus)
     __asm__ volatile ("csrw sstatus, %[sstatus]" : : [sstatus] "r"(sstatus));
 }
 
-#endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_1_SYNCHRONOUS_RISCV_HPP
+#endif

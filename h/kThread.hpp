@@ -1,5 +1,5 @@
-#ifndef OS_PROJECT_BASE_KTHREAD_H
-#define OS_PROJECT_BASE_KTHREAD_H
+#ifndef OPERATIVNI_SISTEMI_KTHREAD_HPP
+#define OPERATIVNI_SISTEMI_KTHREAD_HPP
 
 #include "../lib/hw.h"
 
@@ -12,7 +12,6 @@ public:
     ~kThread() { delete[] stack; }
     inline bool isFinished() const { return finished; }
     inline void setFinished(bool finished) { kThread::finished = finished; }
-    //inline kThread* getNextReadyProccess(){return nextReadyProccess;}
     using Body = void (*)(void *);
 
     static kThread* createProcess(Body body, void* arg, void* stack_space);
@@ -20,8 +19,10 @@ public:
     static void yield();
     static kThread* running;
 
-    void kThreadExit();
+    static void kThreadExit();
+    static void kThreadJoin(); //nisi odradila
     kThread* nextReadyProccess;
+    kThread* nextBlockedProccess;
 private:
     kThread(Body body, void* arg, void* stack_space);
     struct  Context{
@@ -38,9 +39,10 @@ private:
     static void threadWrapper();
     static void dispatch();
     friend class Riscv;
+    friend class kSemaphore;
     friend class kScheduler;
 
 };
 
 
-#endif //OS_PROJECT_BASE_KTHREAD_H
+#endif

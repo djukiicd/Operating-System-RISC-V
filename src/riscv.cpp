@@ -7,6 +7,7 @@
 #include "../h/print.hpp"
 #include "../lib/mem.h"
 #include "../h/kThread.hpp"
+#include "../h/kSemaphore.hpp"
 
 using Body = void (*)(void *);
 
@@ -71,7 +72,7 @@ void Riscv::handleSyscall() {
                 else stack_space = nullptr;
 
                 *handle = kThread::createProcess(body,arg,stack_space);
-                if(handle!= nullptr)
+                if(*handle!= nullptr)
                 {
                     ret = 0;
                     printString("uspesno kreirana nit\n");
@@ -101,48 +102,49 @@ void Riscv::handleSyscall() {
 //                __asm__ volatile("mv %0, a1":"=r"(handle));
 //                PCB::join(handle);
 //                break;
-//            case 0x21: //sem_open
-//                struct kSemaphore** handle;
-//                int  init;
-//                __asm__ volatile("mv %0, a1":"=r"(handle));
-//                __asm__ volatile("mv %0, a2":"=r"(init));
-//                *handle = kSemaphore::ksem_open(init);
-//                if(*handle == nullptr) {
-//                    ret = -21;
-//                } else {
-//                    ret=0;
-//                }
-//                __asm__ volatile("mv a0, %0"::"r"(ret));
-//                break;
-//            case 0x22://sem_close
-//                __asm__ volatile("mv %0, a1":"=r"(sem));
-//                if(sem == nullptr) {
-//                    ret = -22;
-//                    __asm__ volatile("mv a0, %0"::"r"(ret));
-//                    return;
-//                } else ret = 0;
-//                kSemaphore::ksem_close(sem);
-//                __asm__ volatile("mv a0, %0"::"r"(ret));
-//                break;
-//            case 0x23: //sem_wait
-//                __asm__ volatile("mv %0, a1":"=r"(sem));
-//                if(sem == nullptr) {
-//                    ret = -23;
-//                    __asm__ volatile("mv a0, %0"::"r"(ret));
-//                } else ret =0;
-//                kSemaphore::ksem_wait(sem);
-//                __asm__ volatile("mv a0, %0"::"r"(ret));
-//                break;
-//            case 0x24: //sem_signal
-//                __asm__ volatile("mv %0, a1":"=r"(sem));
-//                if(sem == nullptr) {
-//                    ret = -24;
-//                    __asm__ volatile("mv a0, %0"::"r"(ret));
-//                    return;
-//                } else ret=0;
-//                kSemaphore::ksem_signal(sem);
-//                __asm__ volatile("mv a0, %0"::"r"(ret));
-//                break;
+            case 0x21: //sem_open
+                kSemaphore** semHandle;
+                int  init;
+                __asm__ volatile("mv %0, a1":"=r"(semHandle));
+                __asm__ volatile("mv %0, a2":"=r"(init));
+
+                *semHandle = kSemaphore::openSemaphore(init);
+
+                if(*semHandle == nullptr) {
+                    ret = -0x21;
+                }
+                else ret=0;
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
+            case 0x22://sem_close
+                kSemaphore* sem;
+                __asm__ volatile("mv %0, a1":"=r"(sem));
+                if(sem == nullptr) {
+                    ret = -0x22;
+                } else ret = 0;
+
+                kSemaphore::closeSemaphore(sem);
+
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
+            case 0x23: //sem_wait
+            kSemaphore* semW;
+                __asm__ volatile("mv %0, a1":"=r"(semW));
+                if(semW == nullptr) {
+                    ret = -0x23;
+                } else ret = 0;
+                kSemaphore::wait(semW);
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
+            case 0x24: //sem_signal
+            kSemaphore* semS;
+                __asm__ volatile("mv %0, a1":"=r"(semS));
+                if(semS == nullptr) {
+                    ret = -0x24;
+                } else ret= 0;
+                kSemaphore::signal(semS);
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
 //            case 0x41: //getc
 //                character = __getc(); //odlazim u timer interrupt umesto u console interrupt
 //                __asm__ volatile("mv a0, %0"::"r"(character));

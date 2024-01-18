@@ -3,7 +3,6 @@
 //
 
 #include"../lib/hw.h"
-//#include "../h/ccb.hpp"
 #include "../h/print.hpp"
 #include "../h/kThread.hpp"
 #include "../h/syscall_c.hpp"

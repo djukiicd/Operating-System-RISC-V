@@ -1,5 +1,6 @@
-#ifndef _syscall_cpp
-#define _syscall_cpp
+#ifndef OPERATIVNI_SISTEMI_syscall_cpp_hpp
+#define OPERATIVNI_SISTEMI_syscall_cpp_hpp
+
 #include "syscall_c.hpp"
 
 //void* ::operator new (size_t);

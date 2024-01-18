@@ -11,7 +11,7 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         context({body!=nullptr?(uint64)&threadWrapper : 0,stack != nullptr ? (uint64)stack : 0}),
         finished(false)
     {
-        if(body != nullptr) { kScheduler::put(this);}
+        if(body != nullptr) { kScheduler::putReady(this);}
     }
 
 kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
@@ -35,9 +35,9 @@ void kThread::dispatch()
 
     kThread *old = running;
     if (!old->isFinished()) {
-        kScheduler::put(old);
+        kScheduler::putReady(old);
     }
-        running = kScheduler::get();
+        running = kScheduler::getReady();
         kThread::contextSwitch(&old->context, &running->context);
 
 }
