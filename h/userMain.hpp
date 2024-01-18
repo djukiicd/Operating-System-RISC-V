@@ -1,9 +1,0 @@
-//
-// Created by os on 1/18/24.
-//
-
-#ifndef OPERATIVNI_SISTEMI_USERMAIN_HPP
-#define OPERATIVNI_SISTEMI_USERMAIN_HPP
-
-void userMain(void *);
-#endif //OPERATIVNI_SISTEMI_USERMAIN_HPP

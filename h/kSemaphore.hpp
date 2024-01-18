@@ -8,7 +8,7 @@ class kSemaphore{
 
 public:
     kSemaphore(uint64 val = 1) : value(val){}
-    ~kSemaphore();
+    ~kSemaphore(){}
     static int wait(kSemaphore* sem);
     static int signal(kSemaphore* sem);
     uint64 getValue() { return value;}

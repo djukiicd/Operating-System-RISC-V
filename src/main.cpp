@@ -4,8 +4,6 @@
 #include "../h/syscall_cpp.hpp"
 #include "../h/kThread.hpp"
 #include "../h/workers.hpp"
-#include "../h/userMain.hpp"
-
 
 extern "C" { extern int __supervisorTrap;}
 
@@ -59,8 +57,14 @@ int main()
 //    {
 //        delete thread;
 //    }
+    putc('A');
 
-    printString("Main exit\n");
+    printString("\nUnesi char: ");
+    char m = getc();
+    printString("\n");
+    putc(m);
+
+    printString("\nMain exit\n");
     return 0;
 
 }

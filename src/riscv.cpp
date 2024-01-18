@@ -153,6 +153,9 @@ void Riscv::handleSyscall() {
             }
             case 0x31: //time_sleep
             {
+                unsigned long time;
+                __asm__ volatile("mv %0, a1":"=r"(time));
+                //dopuniiii
                 break;
             }
             case 0x41: //getc
