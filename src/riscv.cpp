@@ -1,7 +1,3 @@
-//
-// Created by marko on 20.4.22..
-//
-
 #include "../h/riscv.hpp"
 #include "../lib/console.h"
 #include "../h/print.hpp"
@@ -31,34 +27,34 @@ void Riscv::handleSyscall() {
 
         uint64  syscall;
         __asm__ volatile("mv %0, a0" : "=r"(syscall));
-
-        size_t  size;
-        void* ptr = nullptr;
         int ret;
-//        Body body;
-//        void* arg;
-//        void* stack_space;
-//        PCB** handleCreate;
-//        thread_t handle;
-//        struct kSemaphore* sem;
-//          char character= 'A';
 
         switch(syscall)
         {
             case 0x01: //mem_alloc
+            {
+                size_t  size;
+                void* ptr;
                 __asm__ volatile("mv %0, a1":"=r"(size));
                 size *= MEM_BLOCK_SIZE;
                 //ptr = MemoryAllocator::kmem_alloc(size);
                 ptr = __mem_alloc(size);
                 __asm__ volatile("mv a0, %0" : : "r" (ptr));
                 break;
+            }
+
             case 0x02: //mem_free
+            {
+                void* ptr;
                 __asm__ volatile("mv %0, a1": "=r"(ptr));
                 //ret = MemoryAllocator::kmem_free(ptr);
                 ret = __mem_free(ptr);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
+            }
+
             case 0x11://thread_create
+            {
                 kThread** handle;
                 Body body;
                 void * arg;
@@ -73,18 +69,15 @@ void Riscv::handleSyscall() {
 
                 *handle = kThread::createProcess(body,arg,stack_space);
                 if(*handle!= nullptr)
-                {
                     ret = 0;
-                    printString("uspesno kreirana nit\n");
-
-
-                }
                 else ret = -0x11;
 
                 __asm__ volatile("mv a0, %0"::"r"(ret));
-
                 break;
+            }
+
             case 0x12://thread_exit
+            {
                 if(kThread::running->body == nullptr){
                     ret = -0x12;
                 }
@@ -95,14 +88,24 @@ void Riscv::handleSyscall() {
                 }
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
+            }
+
             case 0x13: //thread_dispatch
+            {
                 kThread::yield();
                 break;
-//            case 0x14: //thread_join
-//                __asm__ volatile("mv %0, a1":"=r"(handle));
-//                PCB::join(handle);
-//                break;
+            }
+
+            case 0x14: //thread_join
+            {
+                kThread* handleJ;
+                __asm__ volatile("mv %0, a1":"=r"(handleJ));
+                kThread::kThreadJoin(handleJ);
+                break;
+            }
+
             case 0x21: //sem_open
+            {
                 kSemaphore** semHandle;
                 int  init;
                 __asm__ volatile("mv %0, a1":"=r"(semHandle));
@@ -116,45 +119,59 @@ void Riscv::handleSyscall() {
                 else ret=0;
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
+            }
+
             case 0x22://sem_close
+            {
                 kSemaphore* sem;
                 __asm__ volatile("mv %0, a1":"=r"(sem));
-                if(sem == nullptr) {
+                if(sem == nullptr)
                     ret = -0x22;
-                } else ret = 0;
+                else ret = 0;
 
                 kSemaphore::closeSemaphore(sem);
+                __asm__ volatile("mv a0, %0"::"r"(ret));
+                break;
+            }
 
-                __asm__ volatile("mv a0, %0"::"r"(ret));
-                break;
             case 0x23: //sem_wait
-            kSemaphore* semW;
+            {
+                kSemaphore* semW;
                 __asm__ volatile("mv %0, a1":"=r"(semW));
-                if(semW == nullptr) {
-                    ret = -0x23;
-                } else ret = 0;
-                kSemaphore::wait(semW);
+                ret = kSemaphore::wait(semW);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
+            }
+
             case 0x24: //sem_signal
-            kSemaphore* semS;
+            {
+                kSemaphore* semS;
                 __asm__ volatile("mv %0, a1":"=r"(semS));
-                if(semS == nullptr) {
-                    ret = -0x24;
-                } else ret= 0;
-                kSemaphore::signal(semS);
+                ret = kSemaphore::signal(semS);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
-//            case 0x41: //getc
-//                character = __getc(); //odlazim u timer interrupt umesto u console interrupt
-//                __asm__ volatile("mv a0, %0"::"r"(character));
-//                break;
-//            case 0x42: //putc
-//                char c;
-//                __asm__ volatile("mv %0, a1":"=r"(c));
-//                __putc(c);
-//                break;
-            case 0x55:
+            }
+            case 0x31: //time_sleep
+            {
+                break;
+            }
+            case 0x41: //getc
+            {
+                char character = __getc(); //odlazim u timer interrupt umesto u console interrupt
+                __asm__ volatile("mv a0, %0"::"r"(character));
+                break;
+            }
+
+            case 0x42: //putc
+            {
+                char c;
+                __asm__ volatile("mv %0, a1":"=r"(c));
+                __putc(c);
+                break;
+            }
+
+            case 0x55: //test
+            {
                 int arg1,arg2,arg3,arg4;
                 __asm__ volatile("mv %0, a1":"=r"(arg1));
                 __asm__ volatile("mv %0, a2":"=r"(arg2));
@@ -163,10 +180,16 @@ void Riscv::handleSyscall() {
                 arg1 += arg2+arg3+arg4;
                 __asm__ volatile("mv a0, %0"::"r"(arg1));
                 break;
-            default: break;
+            }
+
+            default:
+            {
+                printString("Error! Neispravan kod sistemskog poziva: ");
+                printHex(syscall);
+            }
         }
 
-        __asm__ volatile("sd a0, 80(fp)"); //
+        __asm__ volatile("sd a0, 80(fp)"); // i dalje ne znam zasto
         w_sstatus(sstatus);
         w_sepc(sepc);
 
@@ -184,14 +207,10 @@ void Riscv::handleSyscall() {
 
         printString("scause: ");
         printInteger(scause);
-        printString("\n");
-        printString("sepc: ");
+        printString("\nsepc: ");
         printInteger(r_sepc());
-        printString("\n");
-        printString("stval: ");
+        printString("\nstval: ");
         printInteger(r_stval());
-        printString("\n");
-        //while(1);
     }
 }
 void Riscv::handleTimerInterrupt() {

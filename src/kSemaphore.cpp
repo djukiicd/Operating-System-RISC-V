@@ -1,5 +1,4 @@
 #include "../h/kSemaphore.hpp"
-#include "../h/kThread.hpp"
 #include "../h/kScheduler.hpp"
 #include "../h/riscv.hpp"
 
@@ -9,32 +8,36 @@ kSemaphore* kSemaphore::openSemaphore(int init) {
 
 void kSemaphore::closeSemaphore(kSemaphore *sem) {
 
-    //sve niti koje su se blokirale na njemu se deblokiraju (stavljaju u Ready)
-    //njihov wait vraca gresku
-    kThread* thr = kScheduler::getBlocked(sem);
-    while(thr!= nullptr)
+    while(sem->headBlocked)
     {
         sem->unblock();
-        thr = kScheduler::getBlocked(sem);
     }
 
     //oslobadja semafor sa zadatom ruckom
      delete sem;
+     sem = nullptr;
 }
 int kSemaphore::wait(kSemaphore* sem) {
-//treba da vrati gresku u slucaju da je dealociran semafor dok je nit na njemu cekala
-
+    if(!sem) return -0x23;
     uint64 val = sem->getValue();
-    if(--val < 0)
+
+    if(--val < 0){
         sem->block();
+        if(!sem)
+            return -0x23;
+    }
+    return 0;
 }
 
-void kSemaphore::signal(kSemaphore* sem) {
+int kSemaphore::signal(kSemaphore* sem) {
+
+    if(!sem) return -0x24;
 
     uint64 val = sem->getValue();
     if(++val <= 0)
         sem->unblock();
 
+    return  0;
 }
 
 void kSemaphore::block() {

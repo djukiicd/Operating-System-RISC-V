@@ -5,6 +5,7 @@
 
 //void* ::operator new (size_t);
 //void ::operator delete (void*);
+
 class Thread {
 public:
     Thread (void (*body)(void*), void* arg);
@@ -20,6 +21,7 @@ private:
     thread_t myHandle;
     void (*body)(void*); void* arg;
 };
+
 class Semaphore {
 public:
     Semaphore (unsigned init = 1);
@@ -29,6 +31,7 @@ public:
 private:
     sem_t myHandle;
 };
+
 class PeriodicThread : public Thread {
 public:
     void terminate ();
@@ -38,6 +41,7 @@ protected:
 private:
     time_t period;
 };
+
 class Console {
 public:
     static char getc ();

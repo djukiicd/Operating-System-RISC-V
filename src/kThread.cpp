@@ -22,24 +22,20 @@ kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
 
 void kThread::yield()
 {
-    //registre push-ujem na stek u prekidnoj rutini
-    //ako testiras bez sistemskog pzoiva a to radis ne ostavljas nista na stek
     Riscv::pushRegisters();
     kThread::dispatch();
     Riscv::popRegisters();
-    //registre pop-ujem sa steka  u prekidnoj rutini
+
 }
 
 void kThread::dispatch()
 {
-
     kThread *old = running;
     if (!old->isFinished()) {
         kScheduler::putReady(old);
     }
         running = kScheduler::getReady();
         kThread::contextSwitch(&old->context, &running->context);
-
 }
 
 
@@ -53,9 +49,30 @@ void kThread::threadWrapper() {
 void kThread::kThreadExit() {
 
     running->setFinished(true);
+    //odblokiraj niti blokirane sa join
+    running->unblockSuspended();
     yield();
     //treba negde i da je obrises, smisli kako
+
 }
 
+void  kThread::kThreadJoin(kThread* thr) {
+    //suspenduje se tekuca dok se nit sa zadatom ruckom ne zavrsi
+    Riscv::pushRegisters();
+    kThread* old = running;
+    kScheduler::putSuspended(thr, old);
+    running = kScheduler::getReady();
+    kThread::contextSwitch(&old->context, &running->context);
+    Riscv::popRegisters();
+}
 
+void kThread::unblockSuspended() {
 
+    kThread* tmp;
+    while(running->headSuspended)
+    {
+        tmp = kScheduler::getSuspended(running);
+        kScheduler::putReady(tmp);
+
+    }
+}

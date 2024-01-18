@@ -2,7 +2,6 @@
 #define OPERATIVNI_SISTEMI_KSCHEDULER_HPP
 #include "../h/kThread.hpp"
 #include "../h/kSemaphore.hpp"
-#define MAX_SEMAPHORES 100
 
 class kScheduler{
 
@@ -16,15 +15,6 @@ private:
      static kThread* headReady;
      static kThread* tailReady;
 
-     //svaki semafor ima svoj red blokiranih
-     struct semBlocked {
-         kSemaphore* sem;
-         kThread* headBlocked;
-         kThread* tailBlocked;
-
-         semBlocked(kSemaphore* sem) : sem(sem), headBlocked(nullptr), tailBlocked(nullptr) {}
-     };
-    static semBlocked semaphoreArray[MAX_SEMAPHORES];
 public:
 
     static kThread* getReady();
@@ -32,6 +22,9 @@ public:
 
     static kThread* getBlocked(kSemaphore* sem);
     static void putBlocked(kThread* thr, kSemaphore* sem);
+
+    static kThread* getSuspended(kThread* thr);
+    static void putSuspended(kThread* thr, kThread* thrS);
 
 };
 

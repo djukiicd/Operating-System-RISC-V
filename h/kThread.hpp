@@ -19,10 +19,13 @@ public:
     static void yield();
     static kThread* running;
 
-    static void kThreadExit();
-    static void kThreadJoin(); //nisi odradila
     kThread* nextReadyProccess;
     kThread* nextBlockedProccess;
+
+    kThread* nextSuspendedProccess;
+
+    kThread* headSuspended;
+    kThread* tailSuspended;
 private:
     kThread(Body body, void* arg, void* stack_space);
     struct  Context{
@@ -35,9 +38,12 @@ private:
     Context context;
     bool finished;
 
-    static void contextSwitch(Context* oldContext, Context* runningContext); //iz asemblera
+    static void contextSwitch(Context* oldContext, Context* runningContext);
     static void threadWrapper();
     static void dispatch();
+    static void kThreadExit();
+    static void kThreadJoin(kThread* thr); 
+    void unblockSuspended();
     friend class Riscv;
     friend class kSemaphore;
     friend class kScheduler;
