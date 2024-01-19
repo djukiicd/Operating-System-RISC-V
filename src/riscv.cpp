@@ -100,7 +100,8 @@ void Riscv::handleSyscall() {
             {
                 kThread* handleJ;
                 __asm__ volatile("mv %0, a1":"=r"(handleJ));
-                kThread::kThreadJoin(handleJ);
+                //kThread::kThreadJoin(handleJ);
+                kThread::helper(handleJ);
                 break;
             }
 

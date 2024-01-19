@@ -42,7 +42,8 @@ private:
     static void threadWrapper();
     static void dispatch();
     static void kThreadExit();
-    static void kThreadJoin(kThread* thr); 
+    static void kThreadJoin(kThread* thr);
+    static void helper(kThread*);
     void unblockSuspended();
     friend class Riscv;
     friend class kSemaphore;

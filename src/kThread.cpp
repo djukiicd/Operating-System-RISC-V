@@ -12,6 +12,8 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         finished(false)
     {
         if(body != nullptr) { kScheduler::putReady(this);}
+        headSuspended = nullptr;
+        tailSuspended = nullptr;
     }
 
 kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
@@ -49,21 +51,25 @@ void kThread::threadWrapper() {
 void kThread::kThreadExit() {
 
     running->setFinished(true);
-    //odblokiraj niti blokirane sa join
     running->unblockSuspended();
     yield();
     //treba negde i da je obrises, smisli kako
 
 }
 
-void  kThread::kThreadJoin(kThread* thr) {
-    //suspenduje se tekuca dok se nit sa zadatom ruckom ne zavrsi
+void kThread::helper(kThread* thr) {
+    Riscv::popRegisters();
+    kThreadJoin(thr);
     Riscv::pushRegisters();
+
+}
+void  kThread::kThreadJoin(kThread* thr) {
+
     kThread* old = running;
     kScheduler::putSuspended(thr, old);
     running = kScheduler::getReady();
     kThread::contextSwitch(&old->context, &running->context);
-    Riscv::popRegisters();
+
 }
 
 void kThread::unblockSuspended() {

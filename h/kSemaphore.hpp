@@ -7,7 +7,7 @@
 class kSemaphore{
 
 public:
-    kSemaphore(uint64 val = 1) : value(val){}
+    kSemaphore(uint64 val = 1);
     ~kSemaphore(){}
     static int wait(kSemaphore* sem);
     static int signal(kSemaphore* sem);

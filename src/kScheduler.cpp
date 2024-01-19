@@ -1,11 +1,41 @@
 #include "../h/kScheduler.hpp"
+#include "../h/print.hpp"
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;
+kThread* kScheduler::thrIdle = nullptr;
 
-//ne zaboravi idle nit da ubacis na pocetku
+
+void kScheduler::init() {
+
+    printString("Inicijalizovan\n");
+    thrIdle = new kThread(idle,nullptr, nullptr); //da li moram stek za nju da org
+    putReady(thrIdle);
+}
+void kScheduler::idle(void*) {
+    uint8 i = 0;
+    while(1)
+    {   i++;
+        printString("\nidle\n");
+        kThread::yield();
+    }
+}
 kThread* kScheduler::getReady(){
-
+//    kThread* ret;
+//    //ako je idle i ako sledeca ne postoji vrati je, a ko je idle i sledeca postoji izvadi je i stavi je na kraj reda i vrati tu sledecu
+//    kThread* tmp = headReady;
+//    if(headReady) headReady = headReady->nextReadyProccess;
+//    if((tmp == thrIdle && !headReady) || tmp!=thrIdle)
+//    ret = tmp;
+//    else
+//    {
+//        //glava postoji i pokazuje na ono sto treba da vratimo
+//        ret = headReady;
+//        putReady(thrIdle);
+//        headReady = headReady->nextReadyProccess;
+//
+//    }
+//    return ret;
     kThread* tmp = headReady;
     if(headReady) headReady = headReady->nextReadyProccess;
     return tmp;

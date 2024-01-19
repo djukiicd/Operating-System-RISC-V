@@ -9,4 +9,7 @@ extern void workerBodyC(void *);
 
 extern void workerBodyD(void *);
 
+
+extern void idle(void *);
+
 #endif

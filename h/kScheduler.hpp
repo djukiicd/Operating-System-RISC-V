@@ -7,13 +7,15 @@ class kScheduler{
 
 private:
 
-    kScheduler(){} //napravi idle nit i ubaci je i pazi da ona treba da se izvrsava  samo ukoliko ne postoji nijedna druga spremna
+    kScheduler(){}//napravi idle nit i ubaci je i pazi da ona treba da se izvrsava  samo ukoliko ne postoji nijedna druga spremna
     ~kScheduler(){}
     kScheduler(const kScheduler& obj) = delete;
     kScheduler& operator=(const kScheduler&) = delete;
 
      static kThread* headReady;
      static kThread* tailReady;
+
+     static kThread* thrIdle;
 
 public:
 
@@ -25,7 +27,8 @@ public:
 
     static kThread* getSuspended(kThread* thr);
     static void putSuspended(kThread* thr, kThread* thrS);
-
+    static void idle(void*);
+    static void init();
 };
 
 

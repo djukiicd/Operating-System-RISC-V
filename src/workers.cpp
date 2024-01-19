@@ -85,10 +85,11 @@ void workerBodyB(void*)
 void workerBodyC(void*)
 {
     uint8 i = 0;
-    while(i<6)
+
+    while(i<5)
     {
         printString("C\n");
-        thread_dispatch();
+        //thread_dispatch();
         i++;
     }
 
@@ -104,4 +105,14 @@ void workerBodyD(void*)
         i++;
    }
 
+}
+
+void idle(void*)
+{
+
+    while(1)
+    {
+        printString("\nidle\n");
+        kThread::yield();
+    }
 }

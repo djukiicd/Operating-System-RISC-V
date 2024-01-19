@@ -2,6 +2,12 @@
 #include "../h/kScheduler.hpp"
 #include "../h/riscv.hpp"
 
+
+kSemaphore::kSemaphore(uint64 val) :value(val) {
+    headBlocked = nullptr;
+    tailBlocked = nullptr;
+
+}
 kSemaphore* kSemaphore::openSemaphore(int init) {
     return new kSemaphore(init);
 }
