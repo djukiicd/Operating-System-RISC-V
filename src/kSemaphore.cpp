@@ -1,7 +1,8 @@
 #include "../h/kSemaphore.hpp"
 #include "../h/kScheduler.hpp"
 #include "../h/riscv.hpp"
-
+#include "../lib/mem.h"
+#include "../h/print.hpp"
 
 kSemaphore::kSemaphore(uint64 val) :value(val) {
     headBlocked = nullptr;

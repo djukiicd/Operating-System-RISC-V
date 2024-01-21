@@ -31,7 +31,7 @@ int main()
     printString(" mem_alloc done\n");
 
 //pakovanje argumenata fje
-    kThread* threads[4];
+    kThread* threads[3];
 
     int retMain = thread_create(&threads[0], nullptr, nullptr);
     printInteger(retMain);
@@ -40,25 +40,30 @@ int main()
     kThread::running = threads[0];
 
 
-    int retA = thread_create(&threads[1], workerBodyC, nullptr);
+    int retA = thread_create(&threads[2], workerBodyC, nullptr);
     printInteger(retA);
     printString("\n");
 
-    thread_join(threads[1]);
+    int retB = thread_create(&threads[1], workerBodyD, nullptr);
+    printInteger(retB);
+    printString("\n");
 
-//    int retB = thread_create(&threads[2], workerBodyD, nullptr);
-//    printInteger(retB);
-//    printString("\n");
-//
-//
-//
-//    while (!(threads[2]->isFinished()))
+    thread_join(threads[2]);
+
+    uint64 i =0;
+    while(i<7)
+    {
+
+        printString("M\n");
+        i++;
+        thread_dispatch();
+    }
+
+//    while (!(threads[1]->isFinished()))
 //    {
 //        thread_dispatch();
 //
 //    }
-//
-
 
     for (auto &thread: threads)
     {

@@ -29,6 +29,8 @@ public:
     static void putSuspended(kThread* thr, kThread* thrS);
     static void idle(void*);
     static void init();
+
+
 };
 
 

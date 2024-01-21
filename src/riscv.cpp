@@ -100,8 +100,8 @@ void Riscv::handleSyscall() {
             {
                 kThread* handleJ;
                 __asm__ volatile("mv %0, a1":"=r"(handleJ));
-                //kThread::kThreadJoin(handleJ);
-                kThread::helper(handleJ);
+                kThread::kThreadJoin(handleJ);
+                //kThread::helper(handleJ);
                 break;
             }
 
@@ -210,11 +210,12 @@ void Riscv::handleSyscall() {
 
 
         printString("scause: ");
-        printInteger(scause);
+        printHex(scause);
         printString("\nsepc: ");
-        printInteger(r_sepc());
+        printHex(r_sepc());
         printString("\nstval: ");
-        printInteger(r_stval());
+        printHex(r_stval());
+        printString("\n");
     }
 }
 void Riscv::handleTimerInterrupt() {

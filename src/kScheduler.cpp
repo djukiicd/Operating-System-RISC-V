@@ -1,5 +1,6 @@
 #include "../h/kScheduler.hpp"
 #include "../h/print.hpp"
+#include "../lib/mem.h"
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;
@@ -21,69 +22,97 @@ void kScheduler::idle(void*) {
     }
 }
 kThread* kScheduler::getReady(){
-//    kThread* ret;
-//    //ako je idle i ako sledeca ne postoji vrati je, a ko je idle i sledeca postoji izvadi je i stavi je na kraj reda i vrati tu sledecu
-//    kThread* tmp = headReady;
-//    if(headReady) headReady = headReady->nextReadyProccess;
-//    if((tmp == thrIdle && !headReady) || tmp!=thrIdle)
-//    ret = tmp;
-//    else
-//    {
-//        //glava postoji i pokazuje na ono sto treba da vratimo
-//        ret = headReady;
-//        putReady(thrIdle);
-//        headReady = headReady->nextReadyProccess;
-//
-//    }
-//    return ret;
+
+    if(!headReady) return nullptr;
+
     kThread* tmp = headReady;
-    if(headReady) headReady = headReady->nextReadyProccess;
+    headReady = headReady->nextReadyProccess;
+    tmp->nextReadyProccess = nullptr;
+    if(!headReady) tailReady = nullptr;
+//    printString("\nGET: ");
+//    printString("\nheadReady:");
+//   if(headReady) printHex(reinterpret_cast<uint64>(headReady));
+//    printString("\n tailReady:");
+//    if(tailReady)printHex(reinterpret_cast<uint64>(tailReady));
+//    printString("\n");
+//    printHex(reinterpret_cast<uint64>(tmp));
+//    printString("\n");
     return tmp;
 }
 
 void kScheduler::putReady(kThread *thr){
 
-    if(!headReady) headReady = thr;
-    if(tailReady)
+
+    if(tailReady) //postoji i head
     {
+
         tailReady->nextReadyProccess = thr;
     }
+    else
+    {
+        headReady = thr;
+    }
+
     tailReady = thr;
+    thr->nextReadyProccess = nullptr;
+//    printString("\nPUT: ");
+//    printHex(reinterpret_cast<uint64>(thr));
+//    printString("\nheadReady:");
+//    printHex(reinterpret_cast<uint64>(headReady));
+//    printString("\n tailReady:");
+//    printHex(reinterpret_cast<uint64>(tailReady));
+//    printString("\n");
 }
 
 kThread* kScheduler::getBlocked(kSemaphore *sem) {
 
+    if(!sem->headBlocked) return nullptr;
     kThread* tmp = sem->headBlocked;
-    if(sem->headBlocked) sem->headBlocked = sem->headBlocked->nextBlockedProccess;
+    sem->headBlocked = sem->headBlocked->nextBlockedProccess;
+    tmp->nextBlockedProccess = nullptr;
+    if(!sem->headBlocked) sem->tailBlocked = nullptr;
     return tmp;
 }
 
 void kScheduler::putBlocked(kThread *thr, kSemaphore *sem) {
 
-    if(!sem->headBlocked) sem->headBlocked = thr;
     if(sem->tailBlocked)
     {
         sem->tailBlocked->nextBlockedProccess = thr;
     }
+    else
+    {
+        sem->headBlocked = thr;
+    }
     sem->tailBlocked = thr;
+
+    thr->nextBlockedProccess = nullptr;
 }
 
 
 kThread* kScheduler::getSuspended(kThread *thr)  {
 
+    if(!thr->headSuspended) return nullptr;
     kThread* tmp = thr->headSuspended;
-    if(thr->headSuspended) thr->headSuspended = thr->headSuspended->nextSuspendedProccess;
+    thr->headSuspended = thr->headSuspended->nextSuspendedProccess;
+    tmp->nextSuspendedProccess = nullptr;
+    if(!thr->headSuspended) thr->tailSuspended = nullptr;
     return tmp;
 }
 
 void kScheduler::putSuspended(kThread *thr, kThread* thrSus) {
 
-    if(!thr->headSuspended) thr->headSuspended = thrSus;
     if(thr->tailSuspended)
     {
+        printString("\nye\n");
         thr->tailSuspended->nextSuspendedProccess = thrSus;
     }
+    else
+    {
+        thr->headSuspended = thrSus;
+    }
     thr->tailSuspended = thrSus;
+    thrSus->nextSuspendedProccess = nullptr;
 }
 
 

@@ -21,11 +21,11 @@ public:
 
     kThread* nextReadyProccess;
     kThread* nextBlockedProccess;
-
     kThread* nextSuspendedProccess;
 
     kThread* headSuspended;
     kThread* tailSuspended;
+
 private:
     kThread(Body body, void* arg, void* stack_space);
     struct  Context{
@@ -43,7 +43,6 @@ private:
     static void dispatch();
     static void kThreadExit();
     static void kThreadJoin(kThread* thr);
-    static void helper(kThread*);
     void unblockSuspended();
     friend class Riscv;
     friend class kSemaphore;

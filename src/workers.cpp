@@ -86,10 +86,10 @@ void workerBodyC(void*)
 {
     uint8 i = 0;
 
-    while(i<5)
+    while(i<4)
     {
         printString("C\n");
-        //thread_dispatch();
+        thread_dispatch();
         i++;
     }
 
@@ -98,13 +98,13 @@ void workerBodyC(void*)
 void workerBodyD(void*)
 {
     uint8 i = 0;
-    while(i<3)
+    while(i<1)
     {
         printString("D\n");
         thread_dispatch();
         i++;
    }
-
+    printString("DD\n");
 }
 
 void idle(void*)
