@@ -5,7 +5,7 @@
 
 extern void printString(char const *string);
 
-extern void printInteger(uint64 integer); //ne radi za negativne
+extern void printInteger(int integer); //ne radi za negativne
 
 
 extern void printHex(uint64 integer);

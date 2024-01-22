@@ -13,6 +13,7 @@ void Riscv::popSppSpie()
     __asm__ volatile ("sret");
 }
 
+//REGSTRI a3,a3,a5 NE PRENOSE DOBRO ARGUMENTE
 void Riscv::handleSyscall() {
 
     uint64  scause = r_scause();
@@ -61,7 +62,7 @@ void Riscv::handleSyscall() {
                 void * stack_space;
                 __asm__ volatile("mv %0, a1":"=r"(handle));
                 __asm__ volatile("mv %0, a2":"=r"(body));
-                __asm__ volatile("mv %0, a3":"=r"(arg));
+                __asm__ volatile("mv %0, a7":"=r"(arg));
                 if(body!= nullptr){
                     __asm__ volatile("mv %0, a6":"=r"(stack_space));
                 }
@@ -117,7 +118,7 @@ void Riscv::handleSyscall() {
                 if(*semHandle == nullptr) {
                     ret = -0x21;
                 }
-                else ret=0;
+                else ret = 0;
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
             }

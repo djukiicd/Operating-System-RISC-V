@@ -6,6 +6,7 @@
 #include "../h/print.hpp"
 #include "../h/kThread.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/workers.hpp"
 
 static uint64 fibonacci(uint64 n)
 {
@@ -82,11 +83,14 @@ void workerBodyB(void*)
 
 }
 
-void workerBodyC(void*)
+void workerBodyC(void* args) //ovde je skocio iz korisnickog
 {
     uint8 i = 0;
-
-    while(i<4)
+    arguments* argsD = static_cast<arguments*>(args);
+    kSemaphore* sem = argsD->sem;
+    printString("\nsem wait C ");
+    sem_wait(sem);
+    while(i<3)
     {
         printString("C\n");
         thread_dispatch();
@@ -95,24 +99,37 @@ void workerBodyC(void*)
 
 }
 
-void workerBodyD(void*)
+void workerBodyD(void* args)
 {
     uint8 i = 0;
-    while(i<1)
+    arguments* argsD = static_cast<arguments*>(args);
+    kSemaphore* sem = argsD->sem;
+    while(i<4)
     {
         printString("D\n");
         thread_dispatch();
         i++;
    }
-    printString("DD\n");
+    sem_signal(sem);
+
 }
 
-void idle(void*)
+
+void workerBodyE(void* args)
 {
+    uint8 i = 0;
+    arguments* argsD = static_cast<arguments*>(args);
+    kSemaphore* sem = argsD->sem;
+    printString("\nsem wait E ");
+   int ret = sem_wait(sem);
+    printHex(ret);
+    printString("<- E waitRet\n");
 
-    while(1)
+    while(i<5)
     {
-        printString("\nidle\n");
-        kThread::yield();
+        printString("E\n");
+        i++;
     }
+
 }
+

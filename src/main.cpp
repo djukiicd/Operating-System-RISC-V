@@ -8,6 +8,7 @@
 
 extern "C" { extern int __supervisorTrap;}
 
+
 int main()
 {
 
@@ -30,8 +31,9 @@ int main()
     printHex(intPtr);
     printString(" mem_alloc done\n");
 
+
 //pakovanje argumenata fje
-    kThread* threads[3];
+    kThread* threads[4];
 
     int retMain = thread_create(&threads[0], nullptr, nullptr);
     printInteger(retMain);
@@ -40,30 +42,44 @@ int main()
     kThread::running = threads[0];
 
 
-    int retA = thread_create(&threads[2], workerBodyC, nullptr);
-    printInteger(retA);
+
+//sta se desava kad je main blokiran na semaforu???
+    kSemaphore* sem1;
+    int retSem = sem_open(&sem1,0);
+    printInteger(retSem);
     printString("\n");
 
-    int retB = thread_create(&threads[1], workerBodyD, nullptr);
-    printInteger(retB);
+    arguments* argumentsD = new arguments();
+    argumentsD->sem = sem1;
+    printHex((uint64)argumentsD->sem);
+
+    int retE = thread_create(&threads[1], workerBodyE, (void*)argumentsD);
+    printInteger(retE);
     printString("\n");
 
-    thread_join(threads[2]);
+
+    int retC = thread_create(&threads[2], workerBodyC, (void*)argumentsD);
+    printInteger(retC);
+    printString("\n");
+
+    int retD = thread_create(&threads[3], workerBodyD, static_cast<void*>(argumentsD));
+    printInteger(retD);
+    printString("\n");
+
+    //thread_join(threads[1]);
 
     uint64 i =0;
     while(i<7)
     {
-
-        printString("M\n");
+        printString("M");
         i++;
+        if(i == 4)
+            sem_close(sem1);
+           // sem_signal(sem1);
         thread_dispatch();
+
     }
 
-//    while (!(threads[1]->isFinished()))
-//    {
-//        thread_dispatch();
-//
-//    }
 
     for (auto &thread: threads)
     {

@@ -14,36 +14,40 @@ void printString(char const *string)
     }
 }
 
-void printInteger(uint64 integer)
+
+void printInteger(int integer)
 {
     static char digits[] = "0123456789";
-    char buf[16];
-    int i, neg;
-    uint x;
+    char buf[17];  // Increase buffer size to accommodate the sign
+    int i = 0;
+    bool neg = false;
+    int x = integer;
 
-    neg = 0;
-    if (integer < 0)
+    // Handle the sign
+    if (x < 0)
     {
-        neg = 1;
-        x = -integer;
-    } else
+        //buf[i++] = '-';
+        neg = true;
+        x = -x;
+    }
+    else if (x == 0)
     {
-        x = integer;
+        // Special case for zero
+        __putc('0');
+        return;
     }
 
-    i = 0;
+    // Convert the absolute value to string
     do
     {
         buf[i++] = digits[x % 10];
     } while ((x /= 10) != 0);
 
-    if (neg==1)
-        buf[i++] = '-';
-
+    // Print the string in reverse order
+    if(neg) __putc('-');
     while (--i >= 0)
         __putc(buf[i]);
 }
-
 
 void printHex(uint64 integer)
 {

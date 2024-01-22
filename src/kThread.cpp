@@ -3,7 +3,8 @@
 #include "../h/riscv.hpp"
 #include "../h/kScheduler.hpp"
 #include "../lib/mem.h"
-
+#include "../h/workers.hpp"
+#include "../h/syscall_c.hpp"
 kThread* kThread::running = nullptr;
 
 kThread::kThread(Body body, void* arg, void* stack_space) :
@@ -19,6 +20,7 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         nextReadyProccess = nullptr;
         nextBlockedProccess = nullptr;
         nextSuspendedProccess = nullptr;
+
 
     }
 
@@ -36,7 +38,7 @@ void kThread::yield()
 
 }
 
-void kThread::dispatch()
+void kThread::dispatch() //skocio iz sistemskog preko syscall_a
 {
     kThread *old = running;
     if (!old->isFinished()) {
@@ -44,8 +46,12 @@ void kThread::dispatch()
 //        printString("nije gotova");
         kScheduler::putReady(old);
     }
+    else {
+        printHex(reinterpret_cast<uint64>(old));
+        printString(" gotova \n");
+    }
         running = kScheduler::getReady();
-
+        if(!running) { printString("Scheduler nema sta da uzme!");}
         kThread::contextSwitch(&old->context, &running->context);
 }
 
@@ -53,19 +59,22 @@ void kThread::dispatch()
 void kThread::threadWrapper() {
 
     Riscv::popSppSpie();
-    running->body(running->arg);
-    running->kThreadExit();
+    running->body(running->arg);  //ovde kad dodje imao je skok iz korisnickog rezima zbog ovog zakomentarisanog dela
+    //ovde treba da se prebaci u sistemski rezim rada i da tako izvrsava kod jezgra
+    thread_exit();
 }
 
-void kThread::kThreadExit() {
+void kThread::kThreadExit() { //skocio iz sistemskog
 
+    printString("usao u exit\n");
     running->setFinished(true);
     running->unblockSuspended();
-    yield();
+    //yield();
+    dispatch();
 
 }
 
-void  kThread::kThreadJoin(kThread* thr) {
+void  kThread::kThreadJoin(kThread* thr) { //ovde je skocio iz sistemskog
 
     Riscv::pushRegisters();
     kThread* old = running;

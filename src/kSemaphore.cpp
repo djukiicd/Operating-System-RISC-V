@@ -20,28 +20,33 @@ void kSemaphore::closeSemaphore(kSemaphore *sem) {
         sem->unblock();
     }
 
-    //oslobadja semafor sa zadatom ruckom
-     delete sem;
-     sem = nullptr;
 }
 int kSemaphore::wait(kSemaphore* sem) {
-    if(!sem) return -0x23;
-    uint64 val = sem->getValue();
 
-    if(--val < 0){
+    if(!sem) return 0x23;
+    printString("\nSemaphore value: ");
+    printInteger(sem->getValue());
+    printString("\n");
+
+    sem->minusValue();
+
+    if(sem->getValue() < 0){
         sem->block();
         if(!sem)
-            return -0x23;
+        {
+            printString("Da li ulazim ovde?");
+            return 0x23;
+        }
+
     }
     return 0;
 }
 
 int kSemaphore::signal(kSemaphore* sem) {
 
-    if(!sem) return -0x24;
-
-    uint64 val = sem->getValue();
-    if(++val <= 0)
+    if(!sem) return 0x24;
+    sem->plusValue();
+    if(sem->getValue() >= 0)
         sem->unblock();
 
     return  0;

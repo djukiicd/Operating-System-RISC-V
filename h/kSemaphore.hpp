@@ -11,7 +11,9 @@ public:
     ~kSemaphore(){}
     static int wait(kSemaphore* sem);
     static int signal(kSemaphore* sem);
-    uint64 getValue() { return value;}
+    int getValue() { return value;}
+    void minusValue() { value--;}
+    void plusValue() { value++;}
     static kSemaphore*  openSemaphore(int init);
     static void closeSemaphore(kSemaphore* sem);
     kThread* headBlocked;
@@ -19,7 +21,7 @@ public:
 
 
 private:
-    uint64 value;
+    int value;
     void block();
     void unblock();
 

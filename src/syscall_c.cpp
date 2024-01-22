@@ -42,7 +42,7 @@ int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg){
     if(start_routine)  stack_space = mem_alloc(DEFAULT_STACK_SIZE);
     else stack_space = nullptr;
 
-    __asm__ volatile("mv a3, %0": :"r"(arg));
+    __asm__ volatile("mv a7, %0": :"r"(arg));
     __asm__ volatile("mv a2, %0": :"r"(start_routine)); //proveri
     __asm__ volatile("mv a1, %0": :"r"(handle));
     __asm__ volatile("mv a6, %0": : "r"(stack_space));
@@ -151,3 +151,4 @@ void putc(char c){
 
 }
 
+//thread_sleep
