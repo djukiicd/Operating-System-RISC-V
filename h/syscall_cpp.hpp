@@ -16,10 +16,16 @@ public:
     static int sleep (time_t);
 protected:
     Thread ();
+    static void wrapper(void* t)
+    {
+        Thread* thr = (Thread*)t;
+        thr->run();
+    }
     virtual void run () {}
 private:
     thread_t myHandle;
-    void (*body)(void*); void* arg;
+    void (*body)(void*) ;
+    void* arg;
 };
 
 class Semaphore {

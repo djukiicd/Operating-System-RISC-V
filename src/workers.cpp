@@ -7,7 +7,7 @@
 #include "../h/kThread.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/workers.hpp"
-
+#include "../test/printing.hpp"
 static uint64 fibonacci(uint64 n)
 {
     if (n == 0 || n == 1) { return n; }

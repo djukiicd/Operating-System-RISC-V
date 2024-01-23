@@ -1,6 +1,7 @@
 #include "../h/kScheduler.hpp"
 #include "../h/print.hpp"
 #include "../lib/mem.h"
+#include "../test/printing.hpp"
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;

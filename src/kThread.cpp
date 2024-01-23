@@ -5,6 +5,7 @@
 #include "../lib/mem.h"
 #include "../h/workers.hpp"
 #include "../h/syscall_c.hpp"
+#include "../test/printing.hpp"
 kThread* kThread::running = nullptr;
 
 kThread::kThread(Body body, void* arg, void* stack_space) :

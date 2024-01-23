@@ -4,7 +4,8 @@
 #include "../lib/mem.h"
 #include "../h/kThread.hpp"
 #include "../h/kSemaphore.hpp"
-
+#include "../h/MemoryAllocator.hpp"
+#include "../test/printing.hpp"
 using Body = void (*)(void *);
 
 void Riscv::popSppSpie()
@@ -38,7 +39,8 @@ void Riscv::handleSyscall() {
                 void* ptr;
                 __asm__ volatile("mv %0, a1":"=r"(size));
                 size *= MEM_BLOCK_SIZE;
-                //ptr = MemoryAllocator::kmem_alloc(size);
+//                MemoryAllocator& inst = MemoryAllocator::getInstance();
+//                ptr = inst.kmem_alloc(size);
                 ptr = __mem_alloc(size);
                 __asm__ volatile("mv a0, %0" : : "r" (ptr));
                 break;
@@ -48,7 +50,8 @@ void Riscv::handleSyscall() {
             {
                 void* ptr;
                 __asm__ volatile("mv %0, a1": "=r"(ptr));
-                //ret = MemoryAllocator::kmem_free(ptr);
+//                MemoryAllocator& inst = MemoryAllocator::getInstance();
+//                ret = inst.kmem_free(ptr);
                 ret = __mem_free(ptr);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
