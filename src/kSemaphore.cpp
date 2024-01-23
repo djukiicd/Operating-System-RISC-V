@@ -17,24 +17,29 @@ void kSemaphore::closeSemaphore(kSemaphore *sem) {
 
     while(sem->headBlocked)
     {
-        sem->unblock();
+        kThread* thr = kScheduler::getBlocked(sem);
+        if(thr)
+        {
+            thr->setRegularUnbock(false);
+            kScheduler::putReady(thr);
+        }
     }
 
 }
 int kSemaphore::wait(kSemaphore* sem) {
 
     if(!sem) return 0x23;
-    printString("\nSemaphore value: ");
-    printInteger(sem->getValue());
-    printString("\n");
+//    printString("\nSemaphore value: ");
+//    printInteger(sem->getValue());
+//    printString("\n");
 
     sem->minusValue();
-
+//    printInteger(sem->getValue());
+//    printString("\n");
     if(sem->getValue() < 0){
         sem->block();
-        if(!sem)
+        if(!kThread::running->regularUnblock)
         {
-            printString("Da li ulazim ovde?");
             return 0x23;
         }
 

@@ -7,5 +7,5 @@
 
 
 void userMain();
-void userMainWrapper1(void *);
+
 #endif //OPERATIVNI_SISTEMI_USERMAIN_HPP

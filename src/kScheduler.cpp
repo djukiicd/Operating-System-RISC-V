@@ -62,7 +62,7 @@ void kScheduler::putReady(kThread *thr){
 //    printHex(reinterpret_cast<uint64>(headReady));
 //    printString("\n tailReady:");
 //    printHex(reinterpret_cast<uint64>(tailReady));
-    printString("\n");
+//    printString("\n");
 }
 
 kThread* kScheduler::getBlocked(kSemaphore *sem) {

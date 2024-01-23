@@ -13,6 +13,7 @@ static uint64 fibonacci(uint64 n) {
     if (n == 0 || n == 1) { return n; }
     if (n % 10 == 0) { thread_dispatch(); }
     return fibonacci(n - 1) + fibonacci(n - 2);
+
 }
 
 static void workerBodyA(void* arg) {
@@ -32,9 +33,9 @@ static void workerBodyB(void* arg) {
         printString("B: i="); printInt(i); printString("\n");
         for (uint64 j = 0; j < 10000; j++) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
-            thread_dispatch();
+                thread_dispatch();
+            }
         }
-    }
     printString("B finished!\n");
     finishedB = true;
     thread_dispatch();
@@ -62,7 +63,7 @@ static void workerBodyC(void* arg) {
         printString("C: i="); printInt(i); printString("\n");
     }
 
-    printString("A finished!\n");
+    printString("C finished!\n");
     finishedC = true;
     thread_dispatch();
 }
@@ -105,6 +106,7 @@ void Threads_C_API_test() {
     printString("ThreadD created\n");
 
     while (!(finishedA && finishedB && finishedC && finishedD)) {
+        //printString("usao u while\n");
         thread_dispatch();
     }
 

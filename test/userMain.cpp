@@ -3,7 +3,7 @@
 #define LEVEL_1_IMPLEMENTED 1
 #define LEVEL_2_IMPLEMENTED 1
 #define LEVEL_3_IMPLEMENTED 1
-#define LEVEL_4_IMPLEMENTED 1
+#define LEVEL_4_IMPLEMENTED 0
 
 #if LEVEL_2_IMPLEMENTED == 1
 // TEST 1 (zadatak 2, niti C API i sinhrona promena konteksta)
@@ -31,8 +31,7 @@
 #endif
 
 void userMain() {
-    putc('x');
-    printString("f");
+
     printString("Unesite broj testa? [1-7]\n");
     int test = getc() - '0';
     getc(); // Enter posle broja
@@ -61,8 +60,10 @@ void userMain() {
     switch (test) {
         case 1:
 #if LEVEL_2_IMPLEMENTED == 1
+
             Threads_C_API_test();
             printString("TEST 1 (zadatak 2, niti C API i sinhrona promena konteksta)\n");
+
 #endif
             break;
         case 2:

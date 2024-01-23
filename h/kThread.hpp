@@ -13,7 +13,7 @@ public:
     inline bool isFinished() const { return finished; }
     inline void setFinished(bool finished) { kThread::finished = finished; }
     using Body = void (*)(void *);
-
+    inline void setRegularUnbock(bool regUn) { regularUnblock = regUn;}
     static kThread* createProcess(Body body, void* arg, void* stack_space);
 
     static void yield();
@@ -37,6 +37,7 @@ private:
     uint64 * stack; //raste ka nizim adresama
     Context context;
     bool finished;
+    bool regularUnblock;
 
     static void contextSwitch(Context* oldContext, Context* runningContext);
     static void threadWrapper();

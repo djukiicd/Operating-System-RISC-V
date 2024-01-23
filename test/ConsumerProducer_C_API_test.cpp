@@ -14,12 +14,16 @@ struct thread_data {
 static volatile int threadEnd = 0;
 
 static void producerKeyboard(void *arg) {
+
     struct thread_data *data = (struct thread_data *) arg;
 
     int key;
     int i = 0;
     while ((key = getc()) != 0x1b) {
         data->buffer->put(key);
+//        printString("producer keyboard\n");
+//        printInt(key);
+//        printString("\n");
         i++;
 
         if (i % (10 * data->id) == 0) {
@@ -34,11 +38,18 @@ static void producerKeyboard(void *arg) {
 }
 
 static void producer(void *arg) {
+    //printString("producer\n");
+
     struct thread_data *data = (struct thread_data *) arg;
 
     int i = 0;
     while (!threadEnd) {
+
         data->buffer->put(data->id + '0');
+//        printString("produced: ");
+//        printInt(data->id);
+//        printString("\n");
+
         i++;
 
         if (i % (10 * data->id) == 0) {
@@ -50,6 +61,7 @@ static void producer(void *arg) {
 }
 
 static void consumer(void *arg) {
+
     struct thread_data *data = (struct thread_data *) arg;
 
     int i = 0;
@@ -57,7 +69,9 @@ static void consumer(void *arg) {
         int key = data->buffer->get();
         i++;
 
-        putc(key);
+//        printString("consumed: ");
+          putc(key);
+        //printString("\n");
 
         if (i % (5 * data->id) == 0) {
             thread_dispatch();
@@ -70,7 +84,10 @@ static void consumer(void *arg) {
 
     while (data->buffer->getCnt() > 0) {
         int key = data->buffer->get();
+        //printString("consumed: ");
         putc(key);
+        //printString("\n");
+
     }
 
     sem_signal(data->wait);
@@ -93,7 +110,7 @@ void producerConsumer_C_API() {
     printString(".\n");
 
     if(threadNum > n) {
-        printString("Broj proizvodjaca ne sme biti manji od velicine bafera!\n");
+        printString("Broj proizvodjaca ne sme biti veci od velicine bafera!\n");
         return;
     } else if (threadNum < 1) {
         printString("Broj proizvodjaca mora biti veci od nula!\n");

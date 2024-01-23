@@ -11,6 +11,7 @@ using Body = void (*)(void *);
 void Riscv::popSppSpie()
 {
     __asm__ volatile ("csrw sepc, ra");
+    //ms_sstatus(SSTATUS_SPP);
     __asm__ volatile ("sret");
 }
 
@@ -97,6 +98,7 @@ void Riscv::handleSyscall() {
             case 0x13: //thread_dispatch
             {
                 kThread::yield();
+                //kThread::dispatch();
                 break;
             }
 
@@ -206,7 +208,7 @@ void Riscv::handleSyscall() {
 
     {
         if(scause == 0x0000000000000002UL)
-            printString("Ilegalna instrukcija\n:");
+            printString("Nelegalna instrukcija\n:");
         else if (scause == 0x0000000000000005UL)
             printString("Nedozvolena adresa citanja\n");
         else if (scause == 0x0000000000000007UL)
@@ -220,6 +222,8 @@ void Riscv::handleSyscall() {
         printString("\nstval: ");
         printHex(r_stval());
         printString("\n");
+
+        while(1);
     }
 }
 void Riscv::handleTimerInterrupt() {

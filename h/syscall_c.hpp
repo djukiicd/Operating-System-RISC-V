@@ -5,7 +5,6 @@
 #include "../h/kSemaphore.hpp"
     void *mem_alloc(size_t size); //0x01
     int mem_free(void *); //0x02
-    //class kThread;
 
     typedef kThread* thread_t;
 
@@ -14,7 +13,6 @@
     void thread_dispatch(); //0x13                                                                      DA
     void thread_join(thread_t handle); //0x14
 
-    //class kSemaphore;
     typedef kSemaphore* sem_t;
 
     int sem_open(sem_t *handle, unsigned init); //0x21                                                   DA
