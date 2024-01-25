@@ -36,9 +36,9 @@ kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
 
 void kThread::yield()
 {
-    Riscv::pushRegisters();
+  //  Riscv::pushRegisters();
     dispatch();
-    Riscv::popRegisters();
+   // Riscv::popRegisters();
 
 }
 
@@ -56,17 +56,17 @@ void kThread::dispatch() //skocio iz sistemskog preko syscall_a
 
 
 void kThread::threadWrapper(){
-
+    //treba da vidim da li se skok izvrsio iz korisnicke ili sistemske niti i da namestim SPP bit
     Riscv::popSppSpie();
     running->body(running->arg);
-    thread_dispatch();
+    thread_exit();
 }
 
 void kThread::kThreadExit() { //skocio iz sistemskog
 
     running->setFinished(true);
     running->unblockSuspended();
-    dispatch();
+    thread_dispatch();
 
 }
 

@@ -11,7 +11,7 @@ using Body = void (*)(void *);
 void Riscv::popSppSpie()
 {
     __asm__ volatile ("csrw sepc, ra");
-    //ms_sstatus(SSTATUS_SPP);
+    //mc_sstatus(SSTATUS_SPP); //setuje spp na 1 jer smo skocili iz korisnickoh rezima
     __asm__ volatile ("sret");
 }
 
@@ -107,7 +107,6 @@ void Riscv::handleSyscall() {
                 kThread* handleJ;
                 __asm__ volatile("mv %0, a1":"=r"(handleJ));
                 kThread::kThreadJoin(handleJ);
-                //kThread::helper(handleJ);
                 break;
             }
 
@@ -228,15 +227,21 @@ void Riscv::handleSyscall() {
 }
 void Riscv::handleTimerInterrupt() {
 
-    mc_sip(SIP_SSIP); //zasto ovo?? - ni ne radim vrv
-
     uint64 volatile sepc = r_sepc();
     uint64 volatile sstatus = r_sstatus();
-    w_sstatus(sstatus);
+
+    //kThread::dispatch();
+
+
+    mc_sip(SIP_SSIP);
     w_sepc(sepc);
+    w_sstatus(sstatus);
+
+
 }
 
 void Riscv::handleConsoleInterrupt() {
+
     console_handler();
 }
 

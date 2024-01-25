@@ -22,25 +22,18 @@ int main()
     MemoryAllocator::init();
 
    __asm__ volatile ("csrw stvec, %0 ": : "r" ((uint64)&__supervisorTrap | 1));
+    Riscv::mc_sstatus(Riscv::SSTATUS_SIE); //maskiranje spoljasnjih prekida setuje ga na 1
 
 
 
-        kThread* mThr;
-//    int retMain =
-            thread_create(&mThr, nullptr, nullptr);
-//    printInteger(retMain);
-//    printString("\n");
+    kThread* mThr;
+    thread_create(&mThr, nullptr, nullptr);
 
     kThread::running = mThr;
-//
-//    Thread* t1 = new Thread(userMainWrapper, nullptr);
-//    t1->start();
 
-    ms_sstatus(SSTATUS_SPP);
+
     kThread* t1;
-    //int ret =
-            thread_create(&t1,userMainWrapper , nullptr);
-    //printInteger(ret);
+    thread_create(&t1,userMainWrapper , nullptr);
 
     thread_join(t1);
 
@@ -48,7 +41,7 @@ int main()
     delete mThr;
 
     return 0;
-
+//
 //    uint64  size = 4096;
 //    void* ptrA = mem_alloc(size);
 //    uint64 intPtr = (uint64)(&ptrA);
@@ -114,20 +107,20 @@ int main()
 //    {
 //        delete thread;
 //    }
-
-//    ret = mem_free(ptrA);
-//    ret = mem_free(ptrB); //da li ono brisanje steka iz ~kThread() oslobadja ovaj prostor?
-//    printString(" mem_free done\n");
-
-//    //TEST PUTC() I GETC()
-////    putc('A');
-////
-////    printString("\nUnesi char: ");
-////    char m = getc();
-////    printString("\n");
-////    putc(m);
 //
-    printString("\nMain exit\n");
-    return 0;
+////    ret = mem_free(ptrA);
+////    ret = mem_free(ptrB); //da li ono brisanje steka iz ~kThread() oslobadja ovaj prostor?
+////    printString(" mem_free done\n");
+//
+////    //TEST PUTC() I GETC()
+//////    putc('A');
+//////
+//////    printString("\nUnesi char: ");
+//////    char m = getc();
+//////    printString("\n");
+//////    putc(m);
+////
+//    printString("\nMain exit\n");
+//    return 0;
 
 }
