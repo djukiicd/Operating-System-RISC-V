@@ -11,7 +11,7 @@ public:
 
     ~kThread() { delete[] stack; }
     inline bool isFinished() const { return finished; }
-    inline void setFinished(bool finished) { kThread::finished = finished; }
+    inline void setFinished(bool fin) { kThread::finished = fin; }
     using Body = void (*)(void *);
     inline void setRegularUnbock(bool regUn) { regularUnblock = regUn;}
     static kThread* createProcess(Body body, void* arg, void* stack_space);

@@ -11,7 +11,7 @@ using Body = void (*)(void *);
 void Riscv::popSppSpie()
 {
     __asm__ volatile ("csrw sepc, ra");
-    //mc_sstatus(SSTATUS_SPP); //setuje spp na 1 jer smo skocili iz korisnickoh rezima
+    mc_sstatus(SSTATUS_SPP); //setuje spp na 1 jer smo skocili iz korisnickoh rezima
     __asm__ volatile ("sret");
 }
 
@@ -241,8 +241,11 @@ void Riscv::handleTimerInterrupt() {
 }
 
 void Riscv::handleConsoleInterrupt() {
-
+    uint64 volatile sepc = r_sepc();
+    uint64 volatile sstatus = r_sstatus();
     console_handler();
+    w_sepc(sepc);
+    w_sstatus(sstatus);
 }
 
 void Riscv::handleBadCause() {

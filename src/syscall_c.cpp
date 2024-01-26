@@ -20,8 +20,8 @@ void* mem_alloc(size_t size){
     void* ptr = nullptr; //moram u startu da ga imam inicijalizovanog
     int numMemBlocks = size/MEM_BLOCK_SIZE;
     if(size%MEM_BLOCK_SIZE) numMemBlocks += 1;
-    __asm__ volatile("mv a0, %0" : : "r" (0x01));
     __asm__ volatile("mv a1, %0" : : "r" (numMemBlocks));
+    __asm__ volatile("mv a0, %0" : : "r" (0x01));
     __asm__ volatile("ecall");
     __asm__ volatile("mv %0, a0": "=r"(ptr));
     return ptr;
@@ -42,6 +42,7 @@ int thread_create(thread_t * handle, void(*start_routine)(void*), void* arg){
     if(start_routine)  stack_space = mem_alloc(DEFAULT_STACK_SIZE);
     else stack_space = nullptr;
 
+    if(stack_space) stack_space =(void*) ((uint64) stack_space +DEFAULT_STACK_SIZE-1);
     __asm__ volatile("mv a7, %0": :"r"(arg));
     __asm__ volatile("mv a2, %0": :"r"(start_routine)); //proveri
     __asm__ volatile("mv a1, %0": :"r"(handle));

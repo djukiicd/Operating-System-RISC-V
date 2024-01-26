@@ -12,7 +12,7 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         body(body),
         arg(arg),
         stack(body != nullptr ? (uint64*)stack_space - DEFAULT_STACK_SIZE + 1 : nullptr),
-        context({body!=nullptr?(uint64)&threadWrapper : 0,stack != nullptr ? (uint64)stack : 0}),
+        context({body!=nullptr?(uint64)&threadWrapper : 0,stack_space != nullptr ? (uint64)stack_space : 0}),
         finished(false)
     {
 
@@ -29,7 +29,6 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
     }
 
 kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
-
     return new kThread(body,args, stack_space);
 
 }
