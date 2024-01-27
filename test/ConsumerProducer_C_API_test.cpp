@@ -1,7 +1,8 @@
 
 #include "../h/syscall_c.hpp"
-
+#include "../h/print.hpp"
 #include "buffer.hpp"
+#include "printing.hpp"
 
 static sem_t waitForAll;
 
@@ -22,7 +23,7 @@ static void producerKeyboard(void *arg) {
     while ((key = getc()) != 0x1b) {
         data->buffer->put(key);
 //        printString("producer keyboard\n");
-//        printInt(key);
+//        printInteger(key);
 //        printString("\n");
         i++;
 
@@ -47,7 +48,7 @@ static void producer(void *arg) {
 
         data->buffer->put(data->id + '0');
 //        printString("produced: ");
-//        printInt(data->id);
+//        printInteger(data->id);
 //        printString("\n");
 
         i++;
@@ -105,8 +106,9 @@ void producerConsumer_C_API() {
     getString(input, 30);
     n = stringToInt(input);
 
-    printString("Broj proizvodjaca "); printInt(threadNum);
-    printString(" i velicina bafera "); printInt(n);
+    printString("Broj proizvodjaca "); printInteger(threadNum);
+    printString(" i velicina bafera "); printInteger(n
+    );
     printString(".\n");
 
     if(threadNum > n) {

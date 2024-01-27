@@ -1,5 +1,4 @@
 #include "../h/syscall_c.hpp"
-#include "../lib/console.h"
 
 int test(int arg1,int arg2, int arg3, int arg4)
 {

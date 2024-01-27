@@ -4,7 +4,6 @@
 #include "../lib/mem.h"
 #include "../h/kThread.hpp"
 #include "../h/kSemaphore.hpp"
-#include "../h/MemoryAllocator.hpp"
 #include "../test/printing.hpp"
 using Body = void (*)(void *);
 
@@ -18,7 +17,7 @@ void Riscv::popSppSpie()
 //REGSTRI a3,a3,a5 NE PRENOSE DOBRO ARGUMENTE
 void Riscv::handleSyscall() {
 
-    uint64  scause = r_scause();
+    uint64  volatile scause = r_scause();
 
     //ecall iz korisnickog, ecall iz sistemskog rezima
     if(scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)//syscall  PROMENIO MI SE A4 ZASTO???
@@ -28,7 +27,7 @@ void Riscv::handleSyscall() {
         uint64 volatile sstatus = r_sstatus(); // kupim vrednost statusnog registra
         //obe stvari su mi bitne zbog desavanja kada se dodje na sret
 
-        uint64  syscall;
+        uint64 volatile syscall;
         __asm__ volatile("mv %0, a0" : "=r"(syscall));
         int ret;
 
@@ -40,8 +39,6 @@ void Riscv::handleSyscall() {
                 void* ptr;
                 __asm__ volatile("mv %0, a1":"=r"(size));
                 size *= MEM_BLOCK_SIZE;
-//                MemoryAllocator& inst = MemoryAllocator::getInstance();
-//                ptr = inst.kmem_alloc(size);
                 ptr = __mem_alloc(size);
                 __asm__ volatile("mv a0, %0" : : "r" (ptr));
                 break;
@@ -51,8 +48,6 @@ void Riscv::handleSyscall() {
             {
                 void* ptr;
                 __asm__ volatile("mv %0, a1": "=r"(ptr));
-//                MemoryAllocator& inst = MemoryAllocator::getInstance();
-//                ret = inst.kmem_free(ptr);
                 ret = __mem_free(ptr);
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
@@ -75,7 +70,7 @@ void Riscv::handleSyscall() {
                 *handle = kThread::createProcess(body,arg,stack_space);
                 if(*handle!= nullptr)
                     ret = 0;
-                else ret = -0x11;
+                else ret = 0x11;
 
                 __asm__ volatile("mv a0, %0"::"r"(ret));
                 break;
@@ -84,7 +79,7 @@ void Riscv::handleSyscall() {
             case 0x12://thread_exit
             {
                 if(kThread::running->body == nullptr){
-                    ret = -0x12;
+                    ret = 0x12;
                 }
                 else
                 {
@@ -97,8 +92,7 @@ void Riscv::handleSyscall() {
 
             case 0x13: //thread_dispatch
             {
-                kThread::yield();
-                //kThread::dispatch();
+                kThread::dispatch();
                 break;
             }
 
@@ -120,7 +114,7 @@ void Riscv::handleSyscall() {
                 *semHandle = kSemaphore::openSemaphore(init);
 
                 if(*semHandle == nullptr) {
-                    ret = -0x21;
+                    ret = 0x21;
                 }
                 else ret = 0;
                 __asm__ volatile("mv a0, %0"::"r"(ret));
@@ -132,7 +126,7 @@ void Riscv::handleSyscall() {
                 kSemaphore* sem;
                 __asm__ volatile("mv %0, a1":"=r"(sem));
                 if(sem == nullptr)
-                    ret = -0x22;
+                    ret = 0x22;
                 else ret = 0;
 
                 kSemaphore::closeSemaphore(sem);
@@ -193,21 +187,21 @@ void Riscv::handleSyscall() {
 
             default:
             {
-                printString("Error! Neispravan kod sistemskog poziva: ");
-                printHex(syscall);
+//                printString("Error! Neispravan kod sistemskog poziva: ");
+//                printHex(syscall);
             }
         }
 
         __asm__ volatile("sd a0, 80(fp)"); // i dalje ne znam zasto
-        w_sstatus(sstatus);
-        w_sepc(sepc);
 
+        w_sepc(sepc);
+        w_sstatus(sstatus);
     }
     else
 
     {
         if(scause == 0x0000000000000002UL)
-            printString("Nelegalna instrukcija\n:");
+            printString("Ilegalna instrukcija\n:");
         else if (scause == 0x0000000000000005UL)
             printString("Nedozvolena adresa citanja\n");
         else if (scause == 0x0000000000000007UL)
@@ -230,10 +224,8 @@ void Riscv::handleTimerInterrupt() {
     uint64 volatile sepc = r_sepc();
     uint64 volatile sstatus = r_sstatus();
 
-    //kThread::dispatch();
-
-
     mc_sip(SIP_SSIP);
+
     w_sepc(sepc);
     w_sstatus(sstatus);
 
@@ -243,7 +235,9 @@ void Riscv::handleTimerInterrupt() {
 void Riscv::handleConsoleInterrupt() {
     uint64 volatile sepc = r_sepc();
     uint64 volatile sstatus = r_sstatus();
+
     console_handler();
+
     w_sepc(sepc);
     w_sstatus(sstatus);
 }

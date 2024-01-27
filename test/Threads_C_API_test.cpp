@@ -1,7 +1,7 @@
 
 #include "../h/syscall_c.hpp"
 #include "Threads_C_API_test.hpp"
-
+#include "../h/print.hpp"
 #include "printing.hpp"
 
 static volatile bool finishedA = false;
@@ -18,7 +18,7 @@ static uint64 fibonacci(uint64 n) {
 
 static void workerBodyA(void* arg) {
     for (uint64 i = 0; i < 10; i++) {
-        printString("A: i="); printInt(i); printString("\n");
+        printString("A: i="); printInteger(i); printString("\n");
         for (uint64 j = 0; j < 10000; j++) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
             thread_dispatch();
@@ -30,8 +30,8 @@ static void workerBodyA(void* arg) {
 
 static void workerBodyB(void* arg) {
     for (uint64 i = 0; i < 16; i++) {
-        printString("B: i="); printInt(i); printString("\n");
-        for (uint64 j = 0; j < 10000; j++) {
+        printString("B: i="); printInteger(i); printString("\n");
+        for (uint64 j = 0; j <10000; j++) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
                 thread_dispatch();
             }
@@ -44,7 +44,7 @@ static void workerBodyB(void* arg) {
 static void workerBodyC(void* arg) {
     uint8 i = 0;
     for (; i < 3; i++) {
-        printString("C: i="); printInt(i); printString("\n");
+        printString("C: i="); printInteger(i); printString("\n");
     }
 
     printString("C: dispatch\n");
@@ -54,13 +54,13 @@ static void workerBodyC(void* arg) {
     uint64 t1 = 0;
     __asm__ ("mv %[t1], t1" : [t1] "=r"(t1));
 
-    printString("C: t1="); printInt(t1); printString("\n");
+    printString("C: t1="); printInteger(t1); printString("\n");
 
     uint64 result = fibonacci(12);
-    printString("C: fibonaci="); printInt(result); printString("\n");
+    printString("C: fibonaci="); printInteger(result); printString("\n");
 
     for (; i < 6; i++) {
-        printString("C: i="); printInt(i); printString("\n");
+        printString("C: i="); printInteger(i); printString("\n");
     }
 
     printString("C finished!\n");
@@ -71,7 +71,7 @@ static void workerBodyC(void* arg) {
 static void workerBodyD(void* arg) {
     uint8 i = 10;
     for (; i < 13; i++) {
-        printString("D: i="); printInt(i); printString("\n");
+        printString("D: i="); printInteger(i); printString("\n");
     }
 
     printString("D: dispatch\n");
@@ -79,10 +79,10 @@ static void workerBodyD(void* arg) {
     thread_dispatch();
 
     uint64 result = fibonacci(16);
-    printString("D: fibonaci="); printInt(result); printString("\n");
+    printString("D: fibonaci="); printInteger(result); printString("\n");
 
     for (; i < 16; i++) {
-        printString("D: i="); printInt(i); printString("\n");
+        printString("D: i="); printInteger(i); printString("\n");
     }
 
     printString("D finished!\n");

@@ -1,5 +1,5 @@
 #include "../h/syscall_cpp.hpp"
-
+#include "printing.hpp"
 #include "buffer_CPP_API.hpp"
 
 static Semaphore* waitForAll;
@@ -121,8 +121,8 @@ void producerConsumer_CPP_Sync_API() {
     getString(input, 30);
     n = stringToInt(input);
 
-    printString("Broj proizvodjaca "); printInt(threadNum);
-    printString(" i velicina bafera "); printInt(n);
+    printString("Broj proizvodjaca "); printInteger(threadNum);
+    printString(" i velicina bafera "); printInteger(n);
     printString(".\n");
 
     if(threadNum > n) {

@@ -5,15 +5,15 @@
 #include "../h/print.hpp"
 #include "../lib/console.h"
 
-//void printString(char const *string)
-//{
-//    while (*string != '\0')
-//    {
-//        __putc(*string);
-//        string++;
-//    }
-//}
-//
+void printString(char const *string)
+{
+    while (*string != '\0')
+    {
+        __putc(*string);
+        string++;
+    }
+}
+
 
 void printInteger(int integer)
 {

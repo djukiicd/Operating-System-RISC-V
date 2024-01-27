@@ -9,17 +9,17 @@ uint64 lockPrint = 0;
 #define LOCK() while(copy_and_swap(lockPrint, 0, 1)) thread_dispatch()
 #define UNLOCK() while(copy_and_swap(lockPrint, 1, 0))
 
-void printString(char const *string)
-{
-    LOCK();
-    while (*string != '\0')
-    {
-
-        putc(*string);
-        string++;
-    }
-    UNLOCK();
-}
+//void printString(char const *string)
+//{
+//    LOCK();
+//    while (*string != '\0')
+//    {
+//
+//        putc(*string);
+//        string++;
+//    }
+//    UNLOCK();
+//}
 
 char* getString(char *buf, int max) {
     LOCK();
@@ -52,30 +52,30 @@ int stringToInt(const char *s) {
 
 char digits[] = "0123456789ABCDEF";
 
-void printInt(int xx, int base, int sgn)
-{
-    LOCK();
-    char buf[16];
-    int i, neg;
-    uint x;
-
-    neg = 0;
-    if(sgn && xx < 0){
-        neg = 1;
-        x = -xx;
-    } else {
-        x = xx;
-    }
-
-    i = 0;
-    do{
-        buf[i++] = digits[x % base];
-    }while((x /= base) != 0);
-    if(neg)
-        buf[i++] = '-';
-
-    while(--i >= 0)
-        putc(buf[i]);
-
-    UNLOCK();
-}
+//void printInt(int xx, int base, int sgn)
+//{
+//    LOCK();
+//    char buf[16];
+//    int i, neg;
+//    uint x;
+//
+//    neg = 0;
+//    if(sgn && xx < 0){
+//        neg = 1;
+//        x = -xx;
+//    } else {
+//        x = xx;
+//    }
+//
+//    i = 0;
+//    do{
+//        buf[i++] = digits[x % base];
+//    }while((x /= base) != 0);
+//    if(neg)
+//        buf[i++] = '-';
+//
+//    while(--i >= 0)
+//        putc(buf[i]);
+//
+//    UNLOCK();
+//}

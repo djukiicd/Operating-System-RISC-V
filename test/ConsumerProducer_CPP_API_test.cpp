@@ -91,9 +91,9 @@ void testConsumerProducer() {
     n = stringToInt(input);
 
     printString("Broj proizvodjaca ");
-    printInt(threadNum);
+    printInteger(threadNum);
     printString(" i velicina bafera ");
-    printInt(n);
+    printInteger(n);
     printString(".\n");
 
     if (threadNum > n) {

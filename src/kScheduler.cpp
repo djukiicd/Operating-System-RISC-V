@@ -5,23 +5,23 @@
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;
-kThread* kScheduler::thrIdle = nullptr;
-
-
-void kScheduler::init() {
-
-    printString("Inicijalizovan\n");
-    thrIdle = new kThread(idle,nullptr, nullptr); //da li moram stek za nju da org
-    putReady(thrIdle);
-}
-void kScheduler::idle(void*) {
-    uint8 i = 0;
-    while(1)
-    {   i++;
-        printString("\nidle\n");
-        kThread::yield();
-    }
-}
+//kThread* kScheduler::thrIdle = nullptr;
+//
+//
+//void kScheduler::init() {
+//
+//    printString("Inicijalizovan\n");
+//    thrIdle = new kThread(idle,nullptr, nullptr); //da li moram stek za nju da org
+//    putReady(thrIdle);
+//}
+//void kScheduler::idle(void*) {
+//    uint8 i = 0;
+//    while(1)
+//    {   i++;
+//        printString("\nidle\n");
+//        kThread::yield();
+//    }
+//}
 kThread* kScheduler::getReady(){
 
     if(!headReady) return nullptr;

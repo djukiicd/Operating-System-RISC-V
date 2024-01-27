@@ -3,8 +3,7 @@
 #define OS1_BUFFER_CPP_H
 
 #include "../h/syscall_c.hpp"
-#include "printing.hpp"
-
+#include "../h/print.hpp"
 class Buffer {
 private:
     int cap;

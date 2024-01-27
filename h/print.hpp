@@ -3,7 +3,7 @@
 
 #include "../lib/hw.h"
 
-//extern void printString(char const *string);
+extern void printString(char const *string);
 
 extern void printInteger(int integer); //ne radi za negativne
 
