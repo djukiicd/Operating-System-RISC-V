@@ -1,11 +1,7 @@
-//
-// Created by marko on 20.4.22..
-//
-
 #include "../h/print.hpp"
 #include "../lib/console.h"
 
-void printString(char const *string)
+void kprintString(char const *string)
 {
     while (*string != '\0')
     {
@@ -15,7 +11,7 @@ void printString(char const *string)
 }
 
 
-void printInteger(int integer)
+void kprintInteger(int integer)
 {
     static char digits[] = "0123456789";
     char buf[17];  // Increase buffer size to accommodate the sign
@@ -49,7 +45,7 @@ void printInteger(int integer)
         __putc(buf[i]);
 }
 
-void printHex(uint64 integer)
+void kprintHex(uint64 integer)
 {
     static char hexDigits[] = "0123456789ABCDEF";
     char hexChars[17];

@@ -1,6 +1,5 @@
 #include "printing.hpp"
-#include "userMain.hpp"
-#include "../h/print.hpp"
+
 #define LEVEL_1_IMPLEMENTED 1
 #define LEVEL_2_IMPLEMENTED 1
 #define LEVEL_3_IMPLEMENTED 1
@@ -32,7 +31,6 @@
 #endif
 
 void userMain() {
-
     printString("Unesite broj testa? [1-7]\n");
     int test = getc() - '0';
     getc(); // Enter posle broja
@@ -61,10 +59,8 @@ void userMain() {
     switch (test) {
         case 1:
 #if LEVEL_2_IMPLEMENTED == 1
-
             Threads_C_API_test();
             printString("TEST 1 (zadatak 2, niti C API i sinhrona promena konteksta)\n");
-
 #endif
             break;
         case 2:
@@ -87,7 +83,7 @@ void userMain() {
             break;
         case 5:
 #if LEVEL_4_IMPLEMENTED == 1
-//            testSleeping();
+            testSleeping();
             printString("TEST 5 (zadatak 4., thread_sleep test C API)\n");
 #endif
             break;

@@ -1,8 +1,6 @@
 #include "../h/kSemaphore.hpp"
 #include "../h/kScheduler.hpp"
 #include "../h/riscv.hpp"
-#include "../h/print.hpp"
-#include "../test/printing.hpp"
 
 kSemaphore::kSemaphore(uint64 val) :value(val) {
     headBlocked = nullptr;
@@ -29,13 +27,8 @@ void kSemaphore::closeSemaphore(kSemaphore *sem) {
 int kSemaphore::wait(kSemaphore* sem) {
 
     if(!sem) return 0x23;
-//    printString("\nSemaphore value: ");
-//    printInteger(sem->getValue());
-//    printString("\n");
 
     sem->minusValue();
-//    printInteger(sem->getValue());
-//    printString("\n");
     if(sem->getValue() < 0){
         sem->block();
         if(!kThread::running->regularUnblock)

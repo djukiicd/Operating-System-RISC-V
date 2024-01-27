@@ -3,11 +3,11 @@
 
 #include "../lib/hw.h"
 
-extern void printString(char const *string);
+extern void kprintString(char const *string);
 
-extern void printInteger(int integer); //ne radi za negativne
+extern void kprintInteger(int integer); //ne radi za negativne
 
 
-extern void printHex(uint64 integer);
+extern void kprintHex(uint64 integer);
 
 #endif

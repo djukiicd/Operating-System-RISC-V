@@ -15,7 +15,7 @@ extern void workerBodyE(void *);
 struct  arguments{
     kSemaphore* sem;
     uint64 address;
-    arguments():sem(nullptr),address(0){}
+    arguments():sem(nullptr),address(0){}   //dodaj pakovanje argumenata
 };
 
 extern void idle(void *);

@@ -1,12 +1,9 @@
-////extern const void* HEAP_START_ADDR, HEAP_END_ADDR;
-////extern const size_t MEM_BLOCK_SIZE;
 #include "../h/MemoryAllocator.hpp"
-//
+
 ////Alocira (najmanje) size bajtova memorije, zaokruženo i poravnato na blokove veličine MEM_BLOCK_SIZE.
 ////Vraća pokazivač na alocirani deo memorije u slučaju uspeha, a null pokazivač u slučaju neuspeha.
 ////FIRST-FIT
 FreeBlock* MemoryAllocator::freeBlockHead = nullptr;
-
 
 void* MemoryAllocator::kmem_alloc(size_t size) {
 

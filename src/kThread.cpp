@@ -2,10 +2,7 @@
 #include "../h/print.hpp"
 #include "../h/riscv.hpp"
 #include "../h/kScheduler.hpp"
-#include "../lib/mem.h"
-#include "../h/workers.hpp"
 #include "../h/syscall_c.hpp"
-#include "../test/printing.hpp"
 kThread* kThread::running = nullptr;
 
 kThread::kThread(Body body, void* arg, void* stack_space) :
@@ -24,7 +21,6 @@ kThread::kThread(Body body, void* arg, void* stack_space) :
         regularUnblock = true;
 
         if(body != nullptr) { kScheduler::putReady(this);}
-//        printString("Kreirana nit\n");
 
     }
 
@@ -33,35 +29,28 @@ kThread* kThread::createProcess(Body body, void* args, void* stack_space) {
 
 }
 
-void kThread::yield()
-{
-  //  Riscv::pushRegisters();
-    dispatch();
-   // Riscv::popRegisters();
 
-}
-
-void kThread::dispatch() //skocio iz sistemskog preko syscall_a
+void kThread::dispatch()
 {
     kThread *old = running;
     if (!old->isFinished()) {
         kScheduler::putReady(old);
     }
         running = kScheduler::getReady();
-        if(!running) { printString("Scheduler nema sta da uzme!");}
+        //if(!running) { kprintString("Scheduler nema sta da uzme!");}
         kThread::contextSwitch(&old->context, &running->context);
 
 }
 
 
 void kThread::threadWrapper(){
-    //treba da vidim da li se skok izvrsio iz korisnicke ili sistemske niti i da namestim SPP bit
+
     Riscv::popSppSpie();
     running->body(running->arg);
     thread_exit();
 }
 
-void kThread::kThreadExit() { //skocio iz sistemskog
+void kThread::kThreadExit() {
 
     running->setFinished(true);
     running->unblockSuspended();
@@ -69,7 +58,7 @@ void kThread::kThreadExit() { //skocio iz sistemskog
 
 }
 
-void  kThread::kThreadJoin(kThread* thr) { //ovde je skocio iz sistemskog
+void  kThread::kThreadJoin(kThread* thr) {
 
     Riscv::pushRegisters();
     kThread* old = running;

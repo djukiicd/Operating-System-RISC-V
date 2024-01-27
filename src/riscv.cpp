@@ -4,7 +4,6 @@
 #include "../lib/mem.h"
 #include "../h/kThread.hpp"
 #include "../h/kSemaphore.hpp"
-#include "../test/printing.hpp"
 #include  "../h/MemoryAllocator.hpp"
 using Body = void (*)(void *);
 
@@ -204,20 +203,20 @@ void Riscv::handleSyscall() {
 
     {
         if(scause == 0x0000000000000002UL)
-            printString("Ilegalna instrukcija\n:");
+            kprintString("Ilegalna instrukcija\n:");
         else if (scause == 0x0000000000000005UL)
-            printString("Nedozvolena adresa citanja\n");
+            kprintString("Nedozvolena adresa citanja\n");
         else if (scause == 0x0000000000000007UL)
-            printString("Nedozvolena adresa upisa\n");
+            kprintString("Nedozvolena adresa upisa\n");
 
 
-        printString("scause: ");
-        printHex(scause);
-        printString("\nsepc: ");
-        printHex(r_sepc());
-        printString("\nstval: ");
-        printHex(r_stval());
-        printString("\n");
+        kprintString("scause: ");
+        kprintHex(scause);
+        kprintString("\nsepc: ");
+        kprintHex(r_sepc());
+        kprintString("\nstval: ");
+        kprintHex(r_stval());
+        kprintString("\n");
 
         while(1);
     }

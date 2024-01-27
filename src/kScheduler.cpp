@@ -1,7 +1,4 @@
 #include "../h/kScheduler.hpp"
-#include "../h/print.hpp"
-#include "../lib/mem.h"
-#include "../test/printing.hpp"
 
 kThread* kScheduler::headReady = nullptr;
 kThread* kScheduler::tailReady = nullptr;
@@ -105,7 +102,6 @@ void kScheduler::putSuspended(kThread *thr, kThread* thrSus) {
 
     if(thr->tailSuspended)
     {
-        printString("\nye\n");
         thr->tailSuspended->nextSuspendedProccess = thrSus;
     }
     else

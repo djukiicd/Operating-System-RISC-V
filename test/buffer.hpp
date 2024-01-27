@@ -1,9 +1,13 @@
+//
+// Created by zika on 2/26/22.
+//
 
 #ifndef OS1_BUFFER_CPP_H
 #define OS1_BUFFER_CPP_H
 
 #include "../h/syscall_c.hpp"
-#include "../h/print.hpp"
+#include "printing.hpp"
+
 class Buffer {
 private:
     int cap;

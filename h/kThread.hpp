@@ -16,7 +16,6 @@ public:
     inline void setRegularUnbock(bool regUn) { regularUnblock = regUn;}
     static kThread* createProcess(Body body, void* arg, void* stack_space);
 
-    static void yield();
     static kThread* running;
 
     kThread* nextReadyProccess;
