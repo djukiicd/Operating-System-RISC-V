@@ -19,7 +19,7 @@ void userMainWrapper(void*)
 
 int main()
 {
-   // MemoryAllocator::init();
+    MemoryAllocator::init();
 
    __asm__ volatile ("csrw stvec, %0 ": : "r" ((uint64)&__supervisorTrap | 1));
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE); //maskiranje spoljasnjih prekida setuje ga na 1
