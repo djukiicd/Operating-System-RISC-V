@@ -1,5 +1,6 @@
 #include "../h/syscall_cpp.hpp"
 #include "../h/syscall_c.hpp"
+#include "../lib/console.h"
 
 Thread::Thread() {
     body = nullptr;
@@ -50,8 +51,10 @@ int Semaphore::wait() {
 
 char Console::getc() {
    return ::getc();
+
 }
 
 void Console::putc(char c) {
     ::putc(c);
+
 }

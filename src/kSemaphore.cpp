@@ -52,13 +52,12 @@ int kSemaphore::signal(kSemaphore* sem) {
 
 void kSemaphore::block() {
 
-    Riscv::pushRegisters();
     kThread* old = kThread::running;
-    kScheduler::putBlocked(old, this);
+    kScheduler::putBlocked(old, this); //(bilo je old na stari nacin)
     kThread::running = kScheduler::getReady();
 
     kThread::contextSwitch(&old->context, &kThread::running->context);
-    Riscv::popRegisters();
+
 
 }
 

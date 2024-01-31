@@ -172,6 +172,7 @@ void Riscv::handleSyscall() {
                 char c;
                 __asm__ volatile("mv %0, a1":"=r"(c));
                 __putc(c);
+
                 break;
             }
 
@@ -194,7 +195,10 @@ void Riscv::handleSyscall() {
             }
         }
 
-        __asm__ volatile("sd a0, 80(fp)"); // i dalje ne znam zasto
+        __asm__ volatile("sd a0, 80(fp)");
+
+        if(syscall == 0x24 || syscall ==0x21 || syscall==0x22 || syscall ==0x41 || syscall ==0x42)
+            kThread::dispatch();
 
         w_sepc(sepc);
         w_sstatus(sstatus);

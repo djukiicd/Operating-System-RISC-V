@@ -60,12 +60,10 @@ void kThread::kThreadExit() {
 
 void  kThread::kThreadJoin(kThread* thr) {
 
-    Riscv::pushRegisters();
     kThread* old = running;
     kScheduler::putSuspended(thr, old);
     running = kScheduler::getReady();
     kThread::contextSwitch(&old->context, &running->context);
-    Riscv::popRegisters();
 }
 
 void kThread::unblockSuspended() {
