@@ -24,6 +24,8 @@ private:
     int value;
     void block();
     void unblock();
+    void* operator new(size_t size);
+    void operator delete(void* p) noexcept;
 
 };
 #endif //OPERATIVNI_SISTEMI_KSEMAPHORE_HPP

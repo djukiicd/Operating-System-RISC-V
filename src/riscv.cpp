@@ -197,8 +197,9 @@ void Riscv::handleSyscall() {
 
         __asm__ volatile("sd a0, 80(fp)");
 
-        if(syscall == 0x24 || syscall ==0x21 || syscall==0x22 || syscall ==0x41 || syscall ==0x42)
-            kThread::dispatch();
+//        if(syscall == 0x24)
+//            //|| syscall ==0x21 || syscall==0x22 || syscall == 0x41 || syscall ==0x42)
+//            kThread::dispatch();
 
         w_sepc(sepc);
         w_sstatus(sstatus);

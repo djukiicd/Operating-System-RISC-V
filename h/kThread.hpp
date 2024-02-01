@@ -48,6 +48,10 @@ private:
     friend class kSemaphore;
     friend class kScheduler;
 
+    void* operator new(size_t size);
+    void operator delete(void* p) noexcept;
+
+
 };
 
 

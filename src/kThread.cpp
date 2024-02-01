@@ -3,6 +3,7 @@
 #include "../h/riscv.hpp"
 #include "../h/kScheduler.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/MemoryAllocator.hpp"
 kThread* kThread::running = nullptr;
 
 kThread::kThread(Body body, void* arg, void* stack_space) :
@@ -59,11 +60,12 @@ void kThread::kThreadExit() {
 }
 
 void  kThread::kThreadJoin(kThread* thr) {
-
+    Riscv::pushRegisters();
     kThread* old = running;
     kScheduler::putSuspended(thr, old);
     running = kScheduler::getReady();
     kThread::contextSwitch(&old->context, &running->context);
+    Riscv::popRegisters();
 }
 
 void kThread::unblockSuspended() {
@@ -75,4 +77,13 @@ void kThread::unblockSuspended() {
         kScheduler::putReady(tmp);
 
     }
+}
+
+void *kThread::operator new(size_t size) {
+
+    return MemoryAllocator::kmem_alloc(size);
+}
+
+void kThread::operator delete(void *p) noexcept {
+    MemoryAllocator::kmem_free(p);
 }
