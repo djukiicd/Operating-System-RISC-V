@@ -7,7 +7,7 @@ class kScheduler;
 
 class kThread{
 
-public:
+public: 
 
     ~kThread() { delete[] stack; }
     inline bool isFinished() const { return finished; }
