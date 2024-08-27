@@ -1,7 +1,7 @@
 #include "../h/MemoryAllocator.hpp"
 
 ////Alocira (najmanje) size bajtova memorije, zaokruženo i poravnato na blokove veličine MEM_BLOCK_SIZE.
-////Vraća pokazivač na alocirani deo memorije u slučaju uspeha, a null pokazivač u slučaju neuspeha.
+////Vraća pokazivač na alocirani deo memorije u slučaju uspeha, a null pokazivač u slučaju neuspeha. 
 ////FIRST-FIT
 FreeBlock* MemoryAllocator::freeBlockHead = nullptr;
 
