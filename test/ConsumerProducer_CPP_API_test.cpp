@@ -10,7 +10,7 @@ struct thread_data {
     int id;
     BufferCPP *buffer;
     Semaphore *sem;
-};
+}; 
 
 static volatile int threadEnd = 0;
 
