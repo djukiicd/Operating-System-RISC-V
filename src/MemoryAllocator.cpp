@@ -7,7 +7,7 @@ FreeBlock* MemoryAllocator::freeBlockHead = nullptr;
 
 void* MemoryAllocator::kmem_alloc(size_t size) {
 
-    size_t newSize = size; //nepotrebno sad, ali nmg menjam
+    size_t newSize = size; 
     //trazi se slobodan blok velciine newSize
 
     FreeBlock* tmp = freeBlockHead;
